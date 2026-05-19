@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="en" style="background:#0d0d0d;">
+<html lang="en" style="background:#0a0a0a;">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -8,39 +8,41 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="FuelLog">
 <meta name="color-scheme" content="dark">
-<meta name="theme-color" content="#0d0d0d">
+<meta name="theme-color" content="#0a0a0a">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <title>FuelLog</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Syne+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 
 :root{
-–bg:#0d0d0d;
-–bg2:#151518;
-–card:#1c1c22;
-–card2:#222228;
-–border:rgba(255,255,255,0.08);
-–border2:rgba(255,255,255,0.13);
-–accent:#ff6b2b;
-–accent2:#ff9f6b;
+–bg:#0a0a0a;
+–bg2:#111111;
+–card:#181818;
+–card2:#1f1f1f;
+–border:#2a2a2a;
+–border2:#333333;
+–orange:#f97316;
+–orange2:#fb923c;
+–orangeG:linear-gradient(135deg,#f97316,#fb923c);
 –blue:#3b82f6;
 –blue2:#60a5fa;
-–text:#f0f0f5;
-–sub:#8e8e9a;
-–sub2:#5a5a6a;
-–success:#34d399;
-–danger:#f43f5e;
+–blueG:linear-gradient(135deg,#3b82f6,#60a5fa);
+–green:#22c55e;
+–red:#ef4444;
+–text:#f5f5f5;
+–text2:#a0a0a0;
+–text3:#555555;
 –safe-top:env(safe-area-inset-top,0px);
-–safe-bottom:env(safe-area-inset-bottom,0px);
+–safe-bot:env(safe-area-inset-bottom,0px);
 }
 
 html,body{
 width:100%;height:100%;
 background:var(–bg)!important;
-color:var(–text)!important;
-font-family:‘Syne’,sans-serif;
+color:var(–text);
+font-family:‘Inter’,sans-serif;
 overflow:hidden;
 -webkit-text-size-adjust:100%;
 }
@@ -48,290 +50,246 @@ overflow:hidden;
 #app{
 width:100%;height:100%;
 display:flex;flex-direction:column;
-background:var(–bg)!important;
+background:var(–bg);
 position:relative;overflow:hidden;
 }
 
-/* ── AMBIENT GLOW ── */
-.glow{
-position:fixed;border-radius:50%;
-pointer-events:none;z-index:0;
-filter:blur(100px);opacity:0.6;
-}
-.g1{width:300px;height:300px;background:#ff6b2b22;top:-80px;right:-60px;}
-.g2{width:260px;height:260px;background:#3b82f618;bottom:100px;left:-80px;}
-
-/* ── STATUS BAR ── */
-.status-bar{
-height:calc(var(–safe-top) + 6px);
-min-height:52px;
+/* STATUS */
+.sb{
 flex-shrink:0;
+height:calc(var(–safe-top) + 4px);
+min-height:56px;
 background:var(–bg);
-z-index:20;
+z-index:50;
 }
 
-/* ── TOP BAR ── */
-.top-bar{
-padding:0 20px 16px;
+/* TOP BAR */
+.topbar{
+flex-shrink:0;
+padding:0 20px 14px;
 display:flex;align-items:center;justify-content:space-between;
 background:var(–bg);
-z-index:20;flex-shrink:0;
+border-bottom:1px solid var(–border);
+z-index:50;
 }
 
-.brand{display:flex;align-items:center;gap:11px;}
+.logo{display:flex;align-items:center;gap:10px;}
 
-.brand-icon{
-width:40px;height:40px;
-background:linear-gradient(135deg,#ff6b2b,#ff9040);
-border-radius:12px;
+.logo-mark{
+width:36px;height:36px;
+background:var(–orangeG);
+border-radius:10px;
 display:flex;align-items:center;justify-content:center;
-font-size:20px;
-box-shadow:0 4px 16px #ff6b2b44;
 flex-shrink:0;
 }
 
-.brand-name{font-size:20px;font-weight:800;letter-spacing:-0.03em;color:var(–text);}
-.brand-tag{font-size:11px;font-weight:500;color:var(–sub);margin-top:1px;}
+.logo-mark svg{width:20px;height:20px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;}
 
-.month-pill{
-background:var(–card);
-border:1px solid var(–border2);
-border-radius:100px;padding:8px 16px;
+.logo-text{font-size:19px;font-weight:800;letter-spacing:-0.04em;color:var(–text);}
+.logo-sub{font-size:11px;font-weight:500;color:var(–text3);letter-spacing:0.02em;margin-top:1px;}
+
+.month-btn{
 display:flex;align-items:center;gap:6px;
-font-size:13px;font-weight:700;color:var(–text);
-cursor:pointer;
+background:var(–card);border:1px solid var(–border2);
+border-radius:10px;padding:8px 14px;
+font-size:13px;font-weight:600;color:var(–text);
+cursor:pointer;font-family:‘Inter’,sans-serif;
 }
+.month-btn svg{width:12px;height:12px;fill:none;stroke:var(–text3);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
 
-/* ── SCROLL ── */
-.scroll-area{
+/* SCROLL */
+.scroll{
 flex:1;overflow-y:auto;overflow-x:hidden;
 -webkit-overflow-scrolling:touch;
-padding:0 16px;
-padding-bottom:calc(var(–safe-bottom) + 90px);
-z-index:5;position:relative;
+padding:20px 16px;
+padding-bottom:calc(var(–safe-bot) + 88px);
 }
-.scroll-area::-webkit-scrollbar{display:none;}
+.scroll::-webkit-scrollbar{display:none;}
 
-/* ── PAGES ── */
 .page{display:none;}
 .page.active{display:block;}
 
-/* ── HERO CARD ── */
-.total-card{
-background:linear-gradient(135deg,rgba(255,107,43,0.15) 0%,rgba(255,107,43,0.03) 100%);
-border:1px solid rgba(255,107,43,0.25);
-border-radius:24px;padding:24px 22px 22px;
-margin-bottom:20px;position:relative;overflow:hidden;
-}
-.total-card::after{
-content:‘⛽’;position:absolute;right:18px;top:14px;
-font-size:56px;opacity:0.08;
-}
-.total-label{
-font-size:11px;font-weight:700;letter-spacing:0.14em;
-text-transform:uppercase;color:var(–accent2);margin-bottom:8px;
-}
-.total-amount{
-display:flex;align-items:center;gap:8px;
-font-size:48px;font-weight:800;letter-spacing:-0.04em;
-color:var(–text);line-height:1;
-}
-.total-amount .sym{font-size:28px;color:var(–accent2);font-weight:700;}
-.total-meta{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;}
-.meta-chip{
-background:rgba(255,255,255,0.06);
-border:1px solid rgba(255,255,255,0.08);
-border-radius:8px;padding:5px 12px;
-font-size:12px;font-weight:600;
-color:var(–sub);font-family:‘Syne Mono’,monospace;
-}
-
-/* ── SECTION HDR ── */
-.section-hdr{
-display:flex;align-items:center;justify-content:space-between;
-margin:0 2px 12px;
-}
-.section-title{
-font-size:11px;font-weight:700;letter-spacing:0.12em;
-text-transform:uppercase;color:var(–sub);
-}
-.section-action{
-font-size:13px;font-weight:600;color:var(–accent);
-background:none;border:none;cursor:pointer;
-padding:4px 8px;border-radius:8px;
-}
-
-/* ── CARD ── */
-.card{
+/* ── HOME ── */
+.hero{
 background:var(–card);
 border:1px solid var(–border);
-border-radius:20px;overflow:hidden;
-margin-bottom:16px;
+border-radius:20px;padding:24px 22px;
+margin-bottom:20px;position:relative;overflow:hidden;
+}
+.hero::before{
+content:’’;position:absolute;
+top:-40px;right:-40px;
+width:180px;height:180px;
+background:radial-gradient(circle,rgba(249,115,22,0.18) 0%,transparent 70%);
+pointer-events:none;
+}
+.hero-label{
+font-size:11px;font-weight:600;letter-spacing:0.12em;
+text-transform:uppercase;color:var(–text3);margin-bottom:10px;
+}
+.hero-amount{
+display:flex;align-items:baseline;gap:6px;
+font-family:‘JetBrains Mono’,monospace;
+font-size:44px;font-weight:700;
+color:var(–text);line-height:1;margin-bottom:16px;
+letter-spacing:-0.03em;
+}
+.hero-sym{font-size:24px;color:var(–orange2);font-weight:600;}
+.hero-pills{display:flex;gap:8px;flex-wrap:wrap;}
+.pill{
+background:var(–card2);border:1px solid var(–border);
+border-radius:8px;padding:5px 12px;
+font-size:12px;font-weight:500;color:var(–text2);
+font-family:‘JetBrains Mono’,monospace;
 }
 
-/* ── BILL ITEM ── */
-.bill-item{
-display:flex;align-items:center;gap:12px;
-padding:14px 16px;
-border-bottom:1px solid var(–border);
-cursor:pointer;transition:background 0.15s;
-}
-.bill-item:last-child{border-bottom:none;}
-.bill-item:active{background:rgba(255,255,255,0.03);}
+/* SECTION */
+.sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.sec-title{font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(–text3);}
+.sec-btn{font-size:13px;font-weight:600;color:var(–orange);background:none;border:none;cursor:pointer;font-family:‘Inter’,sans-serif;}
 
-.bill-num{
-font-family:‘Syne Mono’,monospace;font-size:11px;
-color:var(–sub2);width:20px;text-align:center;flex-shrink:0;
+/* BILL LIST */
+.bills-card{
+background:var(–card);border:1px solid var(–border);
+border-radius:16px;overflow:hidden;
 }
-.bill-thumb{
-width:46px;height:46px;border-radius:12px;overflow:hidden;
-flex-shrink:0;background:var(–card2);
+
+.empty-state{
+padding:48px 20px;text-align:center;
+}
+.empty-icon{
+width:56px;height:56px;
+background:var(–card2);border:1px solid var(–border);
+border-radius:16px;margin:0 auto 16px;
 display:flex;align-items:center;justify-content:center;
-font-size:20px;cursor:pointer;
 }
-.bill-thumb.no-img{
-border:1.5px dashed rgba(255,107,43,0.4);
-background:rgba(255,107,43,0.06);
+.empty-icon svg{width:24px;height:24px;fill:none;stroke:var(–text3);stroke-width:1.5;stroke-linecap:round;}
+.empty-text{font-size:14px;color:var(–text3);line-height:1.6;}
+.empty-text b{color:var(–text2);}
+
+/* BILL ROW */
+.bill-row{
+display:flex;align-items:center;gap:12px;
+padding:14px 16px;border-bottom:1px solid var(–border);
+cursor:pointer;transition:background 0.12s;
+}
+.bill-row:last-child{border-bottom:none;}
+.bill-row:active{background:rgba(255,255,255,0.03);}
+
+.bill-idx{
+font-family:‘JetBrains Mono’,monospace;font-size:10px;
+color:var(–text3);width:16px;text-align:center;flex-shrink:0;
+}
+
+.bill-thumb{
+width:44px;height:44px;border-radius:11px;flex-shrink:0;
+background:var(–card2);border:1px solid var(–border);
+display:flex;align-items:center;justify-content:center;overflow:hidden;
 }
 .bill-thumb img{width:100%;height:100%;object-fit:cover;}
+.bill-thumb.empty-thumb{border:1px dashed rgba(249,115,22,0.35);background:rgba(249,115,22,0.06);}
+.bill-thumb svg{width:20px;height:20px;fill:none;stroke:var(–text3);stroke-width:1.5;stroke-linecap:round;}
 
-.bill-info{flex:1;min-width:0;}
-.bill-date{font-size:14px;font-weight:700;color:var(–text);}
-.bill-note{font-size:12px;color:var(–sub);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:140px;}
-.bill-no-rcpt{
+.bill-meta{flex:1;min-width:0;}
+.bill-date{font-size:14px;font-weight:600;color:var(–text);letter-spacing:-0.01em;}
+.bill-fuel{font-size:12px;color:var(–text3);margin-top:2px;}
+.bill-noreceipt{
 display:inline-flex;align-items:center;gap:4px;
 margin-top:5px;
-background:rgba(255,107,43,0.12);
-border:1px solid rgba(255,107,43,0.22);
-border-radius:6px;padding:3px 8px;
-font-size:10px;font-weight:700;color:var(–accent2);
+font-size:10px;font-weight:600;color:var(–orange2);
+background:rgba(249,115,22,0.1);border:1px solid rgba(249,115,22,0.2);
+border-radius:5px;padding:2px 7px;
 }
-.bill-right{display:flex;flex-direction:column;align-items:flex-end;gap:7px;flex-shrink:0;}
+
+.bill-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex-shrink:0;}
 .bill-amount{
-font-family:‘Syne Mono’,monospace;font-size:14px;
-font-weight:700;color:var(–accent2);white-space:nowrap;
+font-family:‘JetBrains Mono’,monospace;
+font-size:14px;font-weight:600;color:var(–orange2);white-space:nowrap;
 }
-.bill-del{
-width:30px;height:30px;border-radius:9px;
-background:rgba(244,63,94,0.1);border:none;
+.del-btn{
+width:28px;height:28px;border-radius:8px;
+background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.15);
 display:flex;align-items:center;justify-content:center;
-font-size:13px;cursor:pointer;color:var(–danger);
-transition:background 0.15s;z-index:2;position:relative;
+cursor:pointer;z-index:2;position:relative;
+transition:background 0.15s;
 }
-.bill-del:active{background:rgba(244,63,94,0.25);}
+.del-btn:active{background:rgba(239,68,68,0.25);}
+.del-btn svg{width:13px;height:13px;fill:none;stroke:var(–red);stroke-width:2.5;stroke-linecap:round;}
 
-/* ── EMPTY ── */
-.empty{text-align:center;padding:48px 20px;color:var(–sub);}
-.empty .e-icon{font-size:44px;opacity:0.25;margin-bottom:14px;}
-.empty p{font-size:14px;line-height:1.7;}
+/* ── ADD PAGE ── */
+.page-title{font-size:22px;font-weight:800;letter-spacing:-0.03em;color:var(–text);margin-bottom:20px;}
 
-/* ── FORM ── */
-.form-pad{padding:20px;display:flex;flex-direction:column;gap:16px;}
+.form-card{
+background:var(–card);border:1px solid var(–border);
+border-radius:20px;padding:20px;
+display:flex;flex-direction:column;gap:16px;
+}
 
-.field{display:flex;flex-direction:column;gap:7px;}
-.field label{
-font-size:11px;font-weight:700;letter-spacing:0.11em;
-text-transform:uppercase;color:var(–blue2);padding-left:2px;
-}
-.field input,.field select{
-font-family:‘Syne’,sans-serif;font-size:15px;font-weight:500;
-color:var(–text);background:var(–card2);
-border:1.5px solid var(–border2);
-border-radius:14px;padding:14px 16px;
-outline:none;-webkit-appearance:none;
-width:100%;
-transition:border-color 0.2s,background 0.2s,box-shadow 0.2s;
-}
-.field input::placeholder{color:var(–sub2);font-weight:400;}
-.field input:focus,.field select:focus{
-border-color:var(–blue);
-background:#1a1a28;
-box-shadow:0 0 0 3px rgba(59,130,246,0.15);
-}
-.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-
-/* ── AMOUNT ROW ── */
-.amount-row{
-display:flex;align-items:center;gap:10px;
-background:rgba(255,107,43,0.08);
-border:1.5px solid rgba(255,107,43,0.3);
-border-radius:16px;padding:16px 18px;
-}
-.amount-sym{font-size:26px;color:var(–accent2);font-weight:700;flex-shrink:0;line-height:1;}
-.amount-row input{
-flex:1;font-family:‘Syne Mono’,monospace;
-font-size:34px;font-weight:700;color:var(–text);
-background:none;border:none;outline:none;
-padding:0;min-width:0;
-}
-.amount-row input::placeholder{color:rgba(240,240,245,0.18);}
-
-/* ── UPLOAD ── */
-.upload-box{
+.amount-field{
 background:var(–card2);
-border:1.5px dashed rgba(255,255,255,0.15);
-border-radius:16px;padding:18px 16px;
+border:1.5px solid rgba(249,115,22,0.35);
+border-radius:14px;padding:16px 18px;
+display:flex;align-items:center;gap:10px;
+}
+.amount-field:focus-within{border-color:var(–orange);}
+.amount-sym{
+font-family:‘JetBrains Mono’,monospace;
+font-size:22px;font-weight:600;color:var(–orange2);flex-shrink:0;
+}
+.amount-input{
+flex:1;font-family:‘JetBrains Mono’,monospace;
+font-size:36px;font-weight:700;color:var(–text);
+background:none;border:none;outline:none;padding:0;min-width:0;
+}
+.amount-input::placeholder{color:var(–text3);}
+
+.field-group{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+
+.field{display:flex;flex-direction:column;gap:6px;}
+.field-label{font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(–text3);}
+.field-input{
+font-family:‘Inter’,sans-serif;font-size:14px;font-weight:500;
+color:var(–text);background:var(–card2);
+border:1.5px solid var(–border2);border-radius:12px;
+padding:13px 14px;outline:none;-webkit-appearance:none;width:100%;
+transition:border-color 0.2s,box-shadow 0.2s;
+}
+.field-input::placeholder{color:var(–text3);}
+.field-input:focus{border-color:var(–blue);box-shadow:0 0 0 3px rgba(59,130,246,0.12);}
+
+.upload-field{
+background:var(–card2);border:1.5px dashed var(–border2);
+border-radius:14px;padding:16px;
 display:flex;align-items:center;gap:14px;
 cursor:pointer;position:relative;
 transition:border-color 0.2s,background 0.2s;
 }
-.upload-box.has-file{border-color:var(–success);border-style:solid;background:rgba(52,211,153,0.06);}
-.upload-box input{position:absolute;inset:0;opacity:0;cursor:pointer;}
-.upload-icon{
-width:46px;height:46px;background:rgba(255,255,255,0.07);
-border-radius:13px;display:flex;align-items:center;justify-content:center;
-font-size:22px;flex-shrink:0;
+.upload-field.attached{border-color:var(–green);border-style:solid;background:rgba(34,197,94,0.05);}
+.upload-field input{position:absolute;inset:0;opacity:0;cursor:pointer;}
+.upload-ico{
+width:44px;height:44px;border-radius:12px;
+background:var(–border);flex-shrink:0;
+display:flex;align-items:center;justify-content:center;
 }
-.upload-text .ut1{font-size:15px;font-weight:600;color:var(–text);}
-.upload-text .ut2{font-size:12px;color:var(–sub);margin-top:3px;}
-.upload-prev{width:46px;height:46px;border-radius:10px;object-fit:cover;display:none;margin-left:auto;}
+.upload-ico svg{width:20px;height:20px;fill:none;stroke:var(–text2);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;}
+.upload-label{font-size:14px;font-weight:600;color:var(–text);}
+.upload-sub{font-size:12px;color:var(–text3);margin-top:2px;}
+.upload-thumb{width:44px;height:44px;border-radius:10px;object-fit:cover;display:none;margin-left:auto;border:1px solid var(–border);}
 
-/* ── BUTTONS ── */
-.btn-orange{
-width:100%;
-background:linear-gradient(135deg,#ff6b2b,#ff8c42);
-color:#fff;font-family:‘Syne’,sans-serif;font-size:16px;font-weight:700;
-padding:17px;border:none;border-radius:16px;cursor:pointer;
-box-shadow:0 6px 24px rgba(255,107,43,0.35);
-display:flex;align-items:center;justify-content:center;gap:8px;
-letter-spacing:0.01em;transition:transform 0.15s,box-shadow 0.15s;
+.cta-btn{
+width:100%;padding:17px;border:none;border-radius:14px;
+font-family:‘Inter’,sans-serif;font-size:16px;font-weight:700;
+cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;
+letter-spacing:-0.01em;transition:transform 0.12s,opacity 0.12s;
 }
-.btn-orange:active{transform:scale(0.97);box-shadow:0 2px 12px rgba(255,107,43,0.2);}
-
-.btn-blue{
-width:100%;
-background:linear-gradient(135deg,#3b82f6,#5b9cf6);
-color:#fff;font-family:‘Syne’,sans-serif;font-size:16px;font-weight:700;
-padding:17px;border:none;border-radius:16px;cursor:pointer;
-box-shadow:0 6px 24px rgba(59,130,246,0.3);
-display:flex;align-items:center;justify-content:center;gap:8px;
-transition:transform 0.15s;
-}
-.btn-blue:active{transform:scale(0.97);}
-
-/* ── EXPORT CARD ── */
-.export-card{
-background:linear-gradient(135deg,rgba(52,211,153,0.1),rgba(52,211,153,0.03));
-border:1px solid rgba(52,211,153,0.2);
-border-radius:20px;padding:20px;
-display:flex;align-items:center;gap:16px;
-cursor:pointer;margin-bottom:16px;
-transition:transform 0.15s;
-}
-.export-card:active{transform:scale(0.98);}
-.export-ico{
-width:50px;height:50px;background:rgba(52,211,153,0.13);
-border-radius:14px;display:flex;align-items:center;justify-content:center;
-font-size:24px;flex-shrink:0;
-}
-.export-title{font-size:16px;font-weight:700;color:var(–text);}
-.export-sub{font-size:13px;color:var(–sub);margin-top:3px;}
-.export-arr{font-size:20px;color:var(–success);margin-left:auto;}
+.cta-btn:active{transform:scale(0.98);opacity:0.9;}
+.cta-orange{background:var(–orangeG);color:#fff;box-shadow:0 8px 24px rgba(249,115,22,0.3);}
+.cta-blue{background:var(–blueG);color:#fff;box-shadow:0 8px 24px rgba(59,130,246,0.25);}
 
 /* ── HISTORY ── */
-.hist-month{
+.hist-card{
 background:var(–card);border:1px solid var(–border);
-border-radius:20px;margin-bottom:12px;overflow:hidden;
+border-radius:16px;overflow:hidden;margin-bottom:12px;
 }
 .hist-hdr{
 display:flex;align-items:center;justify-content:space-between;
@@ -339,367 +297,441 @@ padding:16px 18px;cursor:pointer;
 border-bottom:1px solid transparent;transition:border-color 0.2s;
 }
 .hist-hdr.open{border-bottom-color:var(–border);}
-.hist-name{font-size:15px;font-weight:700;color:var(–text);}
-.hist-ct{font-size:12px;color:var(–sub);margin-top:2px;}
-.hist-total{font-family:‘Syne Mono’,monospace;font-size:14px;font-weight:700;color:var(–accent2);}
-.hist-arr{font-size:11px;color:var(–sub);margin-left:8px;transition:transform 0.2s;}
-.hist-hdr.open .hist-arr{transform:rotate(180deg);}
-.hist-bills{display:none;}
-.hist-bills.open{display:block;}
+.hist-month{font-size:15px;font-weight:700;color:var(–text);letter-spacing:-0.02em;}
+.hist-count{font-size:12px;color:var(–text3);margin-top:2px;}
+.hist-right{display:flex;align-items:center;gap:8px;}
+.hist-total{font-family:‘JetBrains Mono’,monospace;font-size:14px;font-weight:600;color:var(–orange2);}
+.hist-chevron{
+width:24px;height:24px;border-radius:6px;
+background:var(–card2);border:1px solid var(–border);
+display:flex;align-items:center;justify-content:center;
+transition:transform 0.2s;
+}
+.hist-chevron svg{width:12px;height:12px;fill:none;stroke:var(–text3);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+.hist-hdr.open .hist-chevron{transform:rotate(180deg);}
+.hist-body{display:none;}
+.hist-body.open{display:block;}
+
+/* ── PROFILE ── */
+.export-btn{
+background:var(–card);border:1px solid var(–border);
+border-radius:16px;padding:18px 20px;
+display:flex;align-items:center;gap:16px;
+cursor:pointer;margin-bottom:16px;
+transition:background 0.15s;
+}
+.export-btn:active{background:var(–card2);}
+.export-ico{
+width:48px;height:48px;
+background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.2);
+border-radius:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.export-ico svg{width:22px;height:22px;fill:none;stroke:var(–green);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;}
+.export-title{font-size:15px;font-weight:700;color:var(–text);letter-spacing:-0.01em;}
+.export-sub{font-size:12px;color:var(–text3);margin-top:3px;}
+.export-arr{margin-left:auto;color:var(–text3);}
+.export-arr svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+
+/* ── TAB BAR ── */
+.tabbar{
+position:fixed;bottom:0;left:0;right:0;
+padding-bottom:var(–safe-bot);
+background:rgba(10,10,10,0.96);
+border-top:1px solid var(–border);
+backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+display:flex;z-index:100;
+}
+.tab{
+flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;
+padding:10px 8px;cursor:pointer;border:none;background:none;
+}
+.tab-ico{
+width:24px;height:24px;
+display:flex;align-items:center;justify-content:center;
+}
+.tab-ico svg{width:22px;height:22px;fill:none;stroke:var(–text3);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+.tab-lbl{font-size:10px;font-weight:600;letter-spacing:0.04em;color:var(–text3);}
+.tab.active .tab-ico svg{stroke:var(–orange);}
+.tab.active .tab-lbl{color:var(–orange);}
 
 /* ── SHEETS ── */
 .overlay{
 display:none;position:fixed;inset:0;
-background:rgba(0,0,0,0.7);z-index:200;
+background:rgba(0,0,0,0.75);z-index:200;
 align-items:flex-end;
-backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
 }
 .overlay.open{display:flex;}
 
 .sheet{
-width:100%;background:#161620;
-border-top-left-radius:28px;border-top-right-radius:28px;
-padding:14px 20px calc(var(–safe-bottom) + 22px);
-animation:sheetUp 0.28s cubic-bezier(0.34,1.4,0.64,1);
-max-height:92vh;overflow-y:auto;
+width:100%;
+background:#141414;
+border-top-left-radius:24px;border-top-right-radius:24px;
+border-top:1px solid var(–border2);
+padding:14px 20px calc(var(–safe-bot) + 24px);
+animation:shUp 0.28s cubic-bezier(0.32,1.2,0.5,1);
+max-height:90vh;overflow-y:auto;
 }
 .sheet::-webkit-scrollbar{display:none;}
+@keyframes shUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
 
-@keyframes sheetUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
+.sh-handle{width:36px;height:4px;background:var(–border2);border-radius:2px;margin:0 auto 18px;}
 
-.sheet-handle{width:40px;height:4px;background:rgba(255,255,255,0.15);border-radius:2px;margin:0 auto 20px;}
-.sheet-title{font-size:18px;font-weight:800;color:var(–text);margin-bottom:18px;}
-.sheet-title-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
-.sheet-close{
-width:34px;height:34px;background:rgba(255,255,255,0.08);
-border:none;border-radius:10px;font-size:16px;color:var(–sub);
-cursor:pointer;display:flex;align-items:center;justify-content:center;
+.sh-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+.sh-title{font-size:19px;font-weight:800;letter-spacing:-0.03em;color:var(–text);}
+.sh-close{
+width:32px;height:32px;
+background:var(–card);border:1px solid var(–border);
+border-radius:9px;display:flex;align-items:center;justify-content:center;
+cursor:pointer;
 }
+.sh-close svg{width:14px;height:14px;fill:none;stroke:var(–text2);stroke-width:2.5;stroke-linecap:round;}
 
-/* Month picker */
-.year-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
-.year-btn{
-width:40px;height:40px;background:var(–card);
-border:1px solid var(–border2);border-radius:12px;
-display:flex;align-items:center;justify-content:center;
-font-size:20px;cursor:pointer;color:var(–text);
+.sh-body{display:flex;flex-direction:column;gap:16px;}
+
+/* Month picker inside sheet */
+.yr-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.yr-btn{
+width:38px;height:38px;
+background:var(–card);border:1px solid var(–border2);border-radius:10px;
+display:flex;align-items:center;justify-content:center;cursor:pointer;
 }
-.year-label{font-size:20px;font-weight:800;color:var(–text);}
-.month-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px;}
-.month-opt{
-padding:12px 4px;text-align:center;border-radius:12px;
-font-size:13px;font-weight:700;color:var(–sub);
+.yr-btn svg{width:16px;height:16px;fill:none;stroke:var(–text);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+.yr-label{font-size:20px;font-weight:800;color:var(–text);letter-spacing:-0.03em;}
+.mo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px;}
+.mo-opt{
+padding:12px 4px;text-align:center;border-radius:10px;
+font-size:13px;font-weight:600;color:var(–text2);
 background:var(–card);border:1px solid var(–border);cursor:pointer;
 transition:all 0.15s;
 }
-.month-opt.sel{background:var(–accent);color:#fff;border-color:var(–accent);}
-.sheet-done{
-width:100%;background:var(–accent);color:#fff;
-font-family:‘Syne’,sans-serif;font-size:16px;font-weight:700;
-padding:16px;border:none;border-radius:14px;cursor:pointer;
-}
+.mo-opt.sel{background:var(–orange);color:#fff;border-color:var(–orange);}
 
-/* Edit receipt row */
+/* Receipt row in edit */
 .rcpt-row{
 background:var(–card2);border:1.5px dashed var(–border2);
-border-radius:16px;padding:14px 16px;
+border-radius:14px;padding:14px 16px;
 display:flex;align-items:center;gap:12px;
-cursor:pointer;position:relative;transition:border-color 0.2s;
+cursor:pointer;position:relative;
+transition:border-color 0.2s,background 0.2s;
 }
-.rcpt-row.has-file{border-color:var(–success);border-style:solid;background:rgba(52,211,153,0.06);}
+.rcpt-row.has{border-color:var(–green);border-style:solid;background:rgba(34,197,94,0.05);}
 .rcpt-row input{position:absolute;inset:0;opacity:0;cursor:pointer;}
 .rcpt-ico{
-width:44px;height:44px;border-radius:12px;overflow:hidden;
-background:rgba(255,255,255,0.07);flex-shrink:0;
-display:flex;align-items:center;justify-content:center;font-size:20px;
+width:42px;height:42px;border-radius:11px;overflow:hidden;
+background:var(–border);flex-shrink:0;
+display:flex;align-items:center;justify-content:center;
 }
+.rcpt-ico svg{width:18px;height:18px;fill:none;stroke:var(–text2);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;}
 .rcpt-ico img{width:100%;height:100%;object-fit:cover;}
-.rcpt-title{font-size:14px;font-weight:600;color:var(–text);}
-.rcpt-sub{font-size:12px;color:var(–sub);margin-top:2px;}
-.rcpt-change{margin-left:auto;font-size:12px;font-weight:700;color:var(–blue2);flex-shrink:0;}
+.rcpt-label{font-size:14px;font-weight:600;color:var(–text);}
+.rcpt-sub{font-size:12px;color:var(–text3);margin-top:2px;}
+.rcpt-action{margin-left:auto;font-size:12px;font-weight:700;color:var(–blue2);flex-shrink:0;}
 
-/* ── TAB BAR ── */
-.tab-bar{
-position:fixed;bottom:0;left:0;right:0;
-padding-bottom:var(–safe-bottom);
-background:rgba(13,13,13,0.95);
-border-top:1px solid rgba(255,255,255,0.07);
-backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
-display:flex;z-index:100;
-}
-.tab{
-flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;
-padding:10px 8px;cursor:pointer;border:none;background:none;
-}
-.tab-icon{font-size:22px;line-height:1;}
-.tab-label{font-size:10px;font-weight:700;letter-spacing:0.05em;color:var(–sub2);}
-.tab.active .tab-label{color:var(–accent);}
-.tab.active .tab-icon{filter:drop-shadow(0 0 8px rgba(255,107,43,0.6));}
-
-/* ── IMG MODAL ── */
-.img-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.93);z-index:300;align-items:center;justify-content:center;}
-.img-modal.open{display:flex;}
-.img-modal img{max-width:94%;max-height:88vh;border-radius:16px;}
-.img-close{
+/* IMG MODAL */
+.imgmodal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:300;align-items:center;justify-content:center;}
+.imgmodal.open{display:flex;}
+.imgmodal img{max-width:94%;max-height:88vh;border-radius:14px;}
+.imgclose{
 position:absolute;top:calc(var(–safe-top) + 16px);right:18px;
-background:rgba(255,255,255,0.13);border:none;color:#fff;
-font-size:17px;width:38px;height:38px;border-radius:10px;
+background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);
+color:#fff;font-size:15px;
+width:36px;height:36px;border-radius:9px;
 cursor:pointer;display:flex;align-items:center;justify-content:center;
+font-family:‘Inter’,sans-serif;font-weight:700;
 }
 
-/* ── TOAST ── */
+/* TOAST */
 .toast{
 position:fixed;
-bottom:calc(var(–safe-bottom) + 88px);left:50%;
-transform:translateX(-50%) translateY(14px);
-background:rgba(20,20,28,0.97);color:var(–text);
-font-size:14px;font-weight:600;padding:12px 22px;
+bottom:calc(var(–safe-bot) + 84px);left:50%;
+transform:translateX(-50%) translateY(12px);
+background:#1a1a1a;color:var(–text);
+font-size:13px;font-weight:600;padding:11px 20px;
 border-radius:100px;border:1px solid var(–border2);
 white-space:nowrap;opacity:0;
-transition:all 0.28s cubic-bezier(0.34,1.4,0.64,1);
-z-index:999;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+transition:all 0.25s cubic-bezier(0.34,1.4,0.64,1);
+z-index:999;
 }
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
-@keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
-.bill-item{animation:fadeUp 0.25s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.bill-row{animation:fadeUp 0.22s ease;}
 </style>
 
 </head>
 <body>
 <div id="app">
 
-  <div class="glow g1"></div>
-  <div class="glow g2"></div>
+<!-- STATUS BAR -->
 
-  <div class="status-bar"></div>
+<div class="sb"></div>
 
-  <div class="top-bar">
-    <div class="brand">
-      <div class="brand-icon">⛽</div>
-      <div>
-        <div class="brand-name">FuelLog</div>
-        <div class="brand-tag">Vehicle Expense</div>
-      </div>
+<!-- TOP BAR -->
+
+<div class="topbar">
+  <div class="logo">
+    <div class="logo-mark">
+      <svg viewBox="0 0 24 24"><path d="M5 19V7a2 2 0 0 1 2-2h4l2 3h4a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2z"/><path d="M12 10v6M9 13h6"/></svg>
     </div>
-    <div class="month-pill" onclick="openMonthSheet()">
-      <span id="top-month">—</span>&nbsp;<span style="font-size:10px;opacity:0.5;">▾</span>
-    </div>
-  </div>
-
-  <div class="scroll-area">
-
-```
-<!-- HOME -->
-<div class="page active" id="page-home">
-  <div class="total-card">
-    <div class="total-label">Monthly Total</div>
-    <div class="total-amount">
-      <span class="sym" id="hero-sar"></span>
-      <span id="total-val">0</span>
-    </div>
-    <div class="total-meta">
-      <div class="meta-chip" id="bill-ct-chip">0 bills</div>
-      <div class="meta-chip" id="month-chip">—</div>
+    <div>
+      <div class="logo-text">FuelLog</div>
+      <div class="logo-sub">Vehicle Expense</div>
     </div>
   </div>
-
-  <div class="section-hdr">
-    <div class="section-title">Bills</div>
-    <button class="section-action" onclick="clearMonthBills()">Clear All</button>
-  </div>
-
-  <div class="card" id="bills-wrap">
-    <div class="empty" id="bills-empty">
-      <div class="e-icon">🧾</div>
-      <p>No bills yet.<br>Tap <b>+</b> below to add one.</p>
-    </div>
-    <div id="bills-list"></div>
-  </div>
+  <button class="month-btn" onclick="openMoSheet()">
+    <span id="top-month">—</span>
+    <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+  </button>
 </div>
 
-<!-- ADD -->
-<div class="page" id="page-add">
-  <div class="section-hdr" style="margin-top:4px;">
-    <div class="section-title">New Bill</div>
-  </div>
-  <div class="card">
-    <div class="form-pad">
-      <div class="amount-row">
-        <span class="amount-sym" id="add-sar"></span>
-        <input type="number" id="add-amount" placeholder="0.00" inputmode="decimal" min="0" step="0.01">
+<!-- SCROLL AREA -->
+
+<div class="scroll">
+
+  <!-- HOME -->
+
+  <div class="page active" id="page-home">
+    <div class="hero">
+      <div class="hero-label">Monthly Total</div>
+      <div class="hero-amount">
+        <span class="hero-sym" id="hero-sar"></span>
+        <span id="total-val">0.00</span>
       </div>
-      <div class="field-row">
+      <div class="hero-pills">
+        <div class="pill" id="bill-ct">0 bills</div>
+        <div class="pill" id="month-pill">—</div>
+      </div>
+    </div>
+
+```
+<div class="sec-hdr">
+  <div class="sec-title">Bills</div>
+  <button class="sec-btn" onclick="clearAll()">Clear All</button>
+</div>
+
+<div class="bills-card" id="bills-card">
+  <div class="empty-state" id="bills-empty">
+    <div class="empty-icon">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="12" x2="12" y2="18"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+    </div>
+    <div class="empty-text">No bills added yet.<br>Tap <b>Add</b> below to get started.</div>
+  </div>
+  <div id="bills-list"></div>
+</div>
+```
+
+  </div>
+
+  <!-- ADD -->
+
+  <div class="page" id="page-add">
+    <div class="page-title">New Bill</div>
+    <div class="form-card">
+      <div class="amount-field">
+        <div class="amount-sym" id="add-sar"></div>
+        <input class="amount-input" type="number" id="add-amount" placeholder="0.00" inputmode="decimal" min="0" step="0.01">
+      </div>
+      <div class="field-group">
         <div class="field">
-          <label>Date</label>
-          <input type="date" id="add-date">
+          <div class="field-label">Date</div>
+          <input class="field-input" type="date" id="add-date">
         </div>
         <div class="field">
-          <label>Fuel Type</label>
-          <select id="add-fuel">
+          <div class="field-label">Fuel Type</div>
+          <select class="field-input" id="add-fuel">
             <option>Petrol</option>
             <option>Diesel</option>
             <option>CNG</option>
-            <option>EV Charge</option>
+            <option>EV</option>
           </select>
         </div>
       </div>
       <div class="field">
-        <label>Notes (optional)</label>
-        <input type="text" id="add-note" placeholder="Station, trip details…">
+        <div class="field-label">Notes (optional)</div>
+        <input class="field-input" type="text" id="add-note" placeholder="Station name, trip info…">
       </div>
-      <div class="upload-box" id="upload-box">
-        <div class="upload-icon" id="upload-icon">📎</div>
-        <div class="upload-text">
-          <div class="ut1" id="upload-title">Attach Receipt</div>
-          <div class="ut2">Photo or image of bill</div>
+      <div class="upload-field" id="upload-field">
+        <div class="upload-ico" id="upload-ico">
+          <svg viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
         </div>
-        <img id="upload-prev" class="upload-prev" alt="">
+        <div>
+          <div class="upload-label" id="upload-label">Attach Receipt</div>
+          <div class="upload-sub">Photo or image of bill</div>
+        </div>
+        <img id="upload-thumb" class="upload-thumb" alt="">
         <input type="file" id="add-image" accept="image/*" capture="environment">
       </div>
-      <button class="btn-orange" onclick="addBill()">＋ Add Bill</button>
+      <button class="cta-btn cta-orange" onclick="addBill()">Add Bill</button>
     </div>
   </div>
-</div>
 
-<!-- HISTORY -->
-<div class="page" id="page-history">
-  <div class="section-hdr" style="margin-top:4px;">
-    <div class="section-title">Past Months</div>
-  </div>
-  <div id="history-list">
-    <div class="empty"><div class="e-icon">📅</div><p>No previous months found.</p></div>
-  </div>
-</div>
+  <!-- HISTORY -->
 
-<!-- PROFILE -->
-<div class="page" id="page-profile">
-  <div class="section-hdr" style="margin-top:4px;">
-    <div class="section-title">Your Details</div>
-  </div>
-  <div class="card">
-    <div class="form-pad">
-      <div class="field">
-        <label>Full Name</label>
-        <input type="text" id="emp-name" placeholder="Your full name">
+  <div class="page" id="page-history">
+    <div class="page-title">History</div>
+    <div id="hist-list">
+      <div class="empty-state">
+        <div class="empty-icon">
+          <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </div>
+        <div class="empty-text">No previous months yet.</div>
       </div>
-      <div class="field-row">
+    </div>
+  </div>
+
+  <!-- PROFILE -->
+
+  <div class="page" id="page-profile">
+    <div class="page-title">Profile</div>
+    <div class="form-card" style="margin-bottom:20px;">
+      <div class="field">
+        <div class="field-label">Full Name</div>
+        <input class="field-input" type="text" id="emp-name" placeholder="Your full name">
+      </div>
+      <div class="field-group">
         <div class="field">
-          <label>Department</label>
-          <input type="text" id="emp-dept" placeholder="e.g. Sales">
+          <div class="field-label">Department</div>
+          <input class="field-input" type="text" id="emp-dept" placeholder="e.g. Sales">
         </div>
         <div class="field">
-          <label>Vehicle No.</label>
-          <input type="text" id="emp-vehicle" placeholder="KL-07-AB-1234">
+          <div class="field-label">Vehicle No.</div>
+          <input class="field-input" type="text" id="emp-vehicle" placeholder="ABC-1234">
         </div>
       </div>
       <div class="field">
-        <label>Manager / Approver</label>
-        <input type="text" id="emp-manager" placeholder="Approver's name">
+        <div class="field-label">Manager / Approver</div>
+        <input class="field-input" type="text" id="emp-manager" placeholder="Approver name">
       </div>
     </div>
-  </div>
 
-  <div class="section-hdr">
-    <div class="section-title">Export</div>
+```
+<div class="sec-hdr"><div class="sec-title">Export</div></div>
+<div class="export-btn" onclick="generatePDF()">
+  <div class="export-ico">
+    <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="12" x2="12" y2="16"/><polyline points="9 16 12 19 15 16"/></svg>
   </div>
-  <div class="export-card" onclick="generatePDF()">
-    <div class="export-ico">📄</div>
-    <div>
-      <div class="export-title">Export PDF Report</div>
-      <div class="export-sub" id="export-sub">Current month — 0 bills</div>
-    </div>
-    <div class="export-arr">→</div>
+  <div>
+    <div class="export-title">Export PDF Report</div>
+    <div class="export-sub" id="export-sub">—</div>
+  </div>
+  <div class="export-arr">
+    <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
   </div>
 </div>
 ```
 
   </div>
 
-  <!-- TAB BAR -->
+</div>
 
-  <div class="tab-bar">
-    <button class="tab active" id="tab-home" onclick="switchTab('home')">
-      <div class="tab-icon">🏠</div><div class="tab-label">Home</div>
-    </button>
-    <button class="tab" id="tab-add" onclick="switchTab('add')">
-      <div class="tab-icon">➕</div><div class="tab-label">Add</div>
-    </button>
-    <button class="tab" id="tab-history" onclick="switchTab('history')">
-      <div class="tab-icon">📅</div><div class="tab-label">History</div>
-    </button>
-    <button class="tab" id="tab-profile" onclick="switchTab('profile')">
-      <div class="tab-icon">👤</div><div class="tab-label">Profile</div>
-    </button>
-  </div>
+<!-- TAB BAR -->
 
+<div class="tabbar">
+  <button class="tab active" id="tab-home" onclick="goTab('home')">
+    <div class="tab-ico">
+      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    </div>
+    <div class="tab-lbl">Home</div>
+  </button>
+  <button class="tab" id="tab-add" onclick="goTab('add')">
+    <div class="tab-ico">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+    </div>
+    <div class="tab-lbl">Add</div>
+  </button>
+  <button class="tab" id="tab-history" onclick="goTab('history')">
+    <div class="tab-ico">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    </div>
+    <div class="tab-lbl">History</div>
+  </button>
+  <button class="tab" id="tab-profile" onclick="goTab('profile')">
+    <div class="tab-ico">
+      <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    </div>
+    <div class="tab-lbl">Profile</div>
+  </button>
 </div>
 
 <!-- MONTH SHEET -->
 
-<div class="overlay" id="month-sheet" onclick="sheetBg(event,'month-sheet')">
+<div class="overlay" id="mo-overlay" onclick="bgClose(event,'mo-overlay')">
   <div class="sheet">
-    <div class="sheet-handle"></div>
-    <div class="sheet-title">Select Period</div>
-    <div class="year-row">
-      <div class="year-btn" onclick="changeYear(-1)">‹</div>
-      <div class="year-label" id="sheet-year"></div>
-      <div class="year-btn" onclick="changeYear(1)">›</div>
+    <div class="sh-handle"></div>
+    <div class="sh-top">
+      <div class="sh-title">Select Period</div>
+      <div class="sh-close" onclick="closeOverlay('mo-overlay')">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </div>
     </div>
-    <div class="month-grid" id="month-grid"></div>
-    <button class="sheet-done" onclick="applyMonth()">Done</button>
+    <div class="yr-row">
+      <div class="yr-btn" onclick="changeYear(-1)">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      </div>
+      <div class="yr-label" id="sh-year"></div>
+      <div class="yr-btn" onclick="changeYear(1)">
+        <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+    </div>
+    <div class="mo-grid" id="mo-grid"></div>
+    <button class="cta-btn cta-orange" onclick="applyMonth()">Confirm</button>
   </div>
 </div>
 
 <!-- EDIT SHEET -->
 
-<div class="overlay" id="edit-sheet" onclick="sheetBg(event,'edit-sheet')">
+<div class="overlay" id="edit-overlay" onclick="bgClose(event,'edit-overlay')">
   <div class="sheet">
-    <div class="sheet-handle"></div>
-    <div class="sheet-title-row">
-      <div class="sheet-title" style="margin:0;">Edit Bill</div>
-      <button class="sheet-close" onclick="closeEdit()">✕</button>
-    </div>
-    <div style="display:flex;flex-direction:column;gap:16px;">
-      <div class="amount-row">
-        <span class="amount-sym" id="edit-sar"></span>
-        <input type="number" id="edit-amount" placeholder="0.00" inputmode="decimal" min="0" step="0.01">
+    <div class="sh-handle"></div>
+    <div class="sh-top">
+      <div class="sh-title">Edit Bill</div>
+      <div class="sh-close" onclick="closeEdit()">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </div>
-      <div class="field-row">
+    </div>
+    <div class="sh-body">
+      <div class="amount-field">
+        <div class="amount-sym" id="edit-sar"></div>
+        <input class="amount-input" type="number" id="edit-amount" placeholder="0.00" inputmode="decimal">
+      </div>
+      <div class="field-group">
         <div class="field">
-          <label>Date</label>
-          <input type="date" id="edit-date">
+          <div class="field-label">Date</div>
+          <input class="field-input" type="date" id="edit-date">
         </div>
         <div class="field">
-          <label>Fuel Type</label>
-          <select id="edit-fuel">
-            <option>Petrol</option><option>Diesel</option><option>CNG</option><option>EV Charge</option>
+          <div class="field-label">Fuel Type</div>
+          <select class="field-input" id="edit-fuel">
+            <option>Petrol</option><option>Diesel</option><option>CNG</option><option>EV</option>
           </select>
         </div>
       </div>
       <div class="field">
-        <label>Notes</label>
-        <input type="text" id="edit-note" placeholder="Station, trip details…">
+        <div class="field-label">Notes</div>
+        <input class="field-input" type="text" id="edit-note" placeholder="Station, trip details…">
       </div>
       <div class="rcpt-row" id="rcpt-row">
-        <div class="rcpt-ico" id="rcpt-ico">📎</div>
+        <div class="rcpt-ico" id="rcpt-ico">
+          <svg viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+        </div>
         <div>
-          <div class="rcpt-title" id="rcpt-title">No receipt</div>
+          <div class="rcpt-label" id="rcpt-label">No receipt</div>
           <div class="rcpt-sub" id="rcpt-sub">Tap to attach photo</div>
         </div>
-        <div class="rcpt-change" id="rcpt-change">Add →</div>
+        <div class="rcpt-action" id="rcpt-action">Add</div>
         <input type="file" id="edit-image" accept="image/*" capture="environment">
       </div>
-      <button class="btn-blue" onclick="saveEdit()">✓ Save Changes</button>
+      <button class="cta-btn cta-blue" onclick="saveEdit()">Save Changes</button>
     </div>
   </div>
 </div>
 
 <!-- IMG MODAL -->
 
-<div class="img-modal" id="img-modal" onclick="closeImgModal()">
-  <button class="img-close">✕</button>
-  <img id="img-modal-src" src="" alt="">
+<div class="imgmodal" id="imgmodal" onclick="closeImg()">
+  <div class="imgclose">✕</div>
+  <img id="imgmodal-src" src="" alt="">
 </div>
 
 <div class="toast" id="toast"></div>
@@ -707,120 +739,97 @@ z-index:999;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <script>
-const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const MO=['January','February','March','April','May','June','July','August','September','October','November','December'];
 const MS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
-let selMonth,selYear,tempMonth,tempYear;
-let bills=[];
-let addImg=null,editId=null,editImg=null,editImgChanged=false;
+let sM,sY,tM,tY,bills=[],addImg=null,editId=null,editImg=null,editImgChg=false;
 
-// SAR symbol — official U+20C1 with Arabic font stack
-function sar(size,color){
-  const s=size||'1em',c=color||'currentColor';
-  return `<span style="font-family:'Saudi Riyal','Geeza Pro','Arabic Typesetting',serif;font-size:${s};color:${c};font-weight:700;line-height:1;">&#x20C1;</span>`;
+function sarHtml(sz,col){
+  return `<span style="font-family:'Saudi Riyal','Geeza Pro','Arabic Typesetting',serif;font-size:${sz||'1em'};color:${col||'currentColor'};font-weight:600;line-height:1;">&#x20C1;</span>`;
 }
 
 function init(){
-  // inject SAR symbols
   ['hero-sar','add-sar','edit-sar'].forEach(id=>{
     const el=document.getElementById(id);
-    if(el) el.innerHTML=sar(id==='hero-sar'?'30px':'26px','var(--accent2)');
+    if(el) el.innerHTML=sarHtml(id==='hero-sar'?'28px':'22px','var(--orange2)');
   });
-
   const now=new Date();
-  selMonth=now.getMonth(); selYear=now.getFullYear();
-  tempMonth=selMonth; tempYear=selYear;
+  sM=now.getMonth();sY=now.getFullYear();tM=sM;tY=sY;
   document.getElementById('add-date').valueAsDate=now;
-
-  // profile save
   ['emp-name','emp-dept','emp-vehicle','emp-manager'].forEach(id=>{
     const el=document.getElementById(id);
     const v=localStorage.getItem('fl_'+id);
     if(v) el.value=v;
     el.addEventListener('input',()=>localStorage.setItem('fl_'+id,el.value));
   });
-
-  // add image
   document.getElementById('add-image').addEventListener('change',function(){
     if(this.files&&this.files[0]){
       const r=new FileReader();
       r.onload=e=>{
         addImg=e.target.result;
-        const p=document.getElementById('upload-prev');
-        p.src=addImg; p.style.display='block';
-        document.getElementById('upload-icon').textContent='✅';
-        document.getElementById('upload-title').textContent='Receipt attached';
-        document.getElementById('upload-box').classList.add('has-file');
+        const t=document.getElementById('upload-thumb');
+        t.src=addImg;t.style.display='block';
+        document.getElementById('upload-label').textContent='Receipt attached';
+        document.getElementById('upload-field').classList.add('attached');
+        document.getElementById('upload-ico').innerHTML='<svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:none;stroke:var(--green);stroke-width:2;stroke-linecap:round"><polyline points="20 6 9 17 4 12"/></svg>';
       };
       r.readAsDataURL(this.files[0]);
     }
   });
-
-  // edit image
   document.getElementById('edit-image').addEventListener('change',function(){
     if(this.files&&this.files[0]){
       const r=new FileReader();
       r.onload=e=>{
-        editImg=e.target.result; editImgChanged=true;
+        editImg=e.target.result;editImgChg=true;
         document.getElementById('rcpt-ico').innerHTML=`<img src="${editImg}" alt="">`;
-        document.getElementById('rcpt-title').textContent='Receipt attached';
+        document.getElementById('rcpt-label').textContent='Receipt attached';
         document.getElementById('rcpt-sub').textContent='Tap to change';
-        document.getElementById('rcpt-change').textContent='Change →';
-        document.getElementById('rcpt-row').classList.add('has-file');
+        document.getElementById('rcpt-action').textContent='Change';
+        document.getElementById('rcpt-row').classList.add('has');
       };
       r.readAsDataURL(this.files[0]);
     }
   });
-
-  buildMonthGrid();
-  loadBills();
-  updateUI();
+  buildMoGrid();loadBills();render();
 }
 
-function getKey(m,y){return`fl_bills_${y}_${m}`;}
-function curKey(){return getKey(selMonth,selYear);}
-function loadBills(){const r=localStorage.getItem(curKey());bills=r?JSON.parse(r):[];}
-function saveBills(){localStorage.setItem(curKey(),JSON.stringify(bills));}
+function key(m,y){return`fl_bills_${y}_${m}`;}
+function loadBills(){const r=localStorage.getItem(key(sM,sY));bills=r?JSON.parse(r):[];}
+function saveBills(){localStorage.setItem(key(sM,sY),JSON.stringify(bills));}
 
-// MONTH SHEET
-function openMonthSheet(){
-  tempMonth=selMonth;tempYear=selYear;
-  document.getElementById('sheet-year').textContent=tempYear;
-  buildMonthGrid();
-  document.getElementById('month-sheet').classList.add('open');
+function openMoSheet(){
+  tM=sM;tY=sY;
+  document.getElementById('sh-year').textContent=tY;
+  buildMoGrid();
+  document.getElementById('mo-overlay').classList.add('open');
 }
-function sheetBg(e,id){if(e.target===document.getElementById(id))document.getElementById(id).classList.remove('open');}
-function changeYear(d){tempYear+=d;document.getElementById('sheet-year').textContent=tempYear;buildMonthGrid();}
-function buildMonthGrid(){
-  const g=document.getElementById('month-grid');
-  if(!g)return;
-  g.innerHTML='';
+function bgClose(e,id){if(e.target===document.getElementById(id))closeOverlay(id);}
+function closeOverlay(id){document.getElementById(id).classList.remove('open');}
+function changeYear(d){tY+=d;document.getElementById('sh-year').textContent=tY;buildMoGrid();}
+function buildMoGrid(){
+  const g=document.getElementById('mo-grid');if(!g)return;g.innerHTML='';
   MS.forEach((m,i)=>{
     const el=document.createElement('div');
-    el.className='month-opt'+(i===tempMonth?' sel':'');
+    el.className='mo-opt'+(i===tM?' sel':'');
     el.textContent=m;
-    el.onclick=()=>{document.querySelectorAll('.month-opt').forEach(x=>x.classList.remove('sel'));el.classList.add('sel');tempMonth=i;};
+    el.onclick=()=>{document.querySelectorAll('.mo-opt').forEach(x=>x.classList.remove('sel'));el.classList.add('sel');tM=i;};
     g.appendChild(el);
   });
 }
 function applyMonth(){
-  selMonth=tempMonth;selYear=tempYear;
-  document.getElementById('month-sheet').classList.remove('open');
-  loadBills();updateUI();renderHistory();
+  sM=tM;sY=tY;closeOverlay('mo-overlay');loadBills();render();renderHist();
 }
 
-// ADD
 function addBill(){
-  const amount=parseFloat(document.getElementById('add-amount').value);
-  const date=document.getElementById('add-date').value;
+  const amt=parseFloat(document.getElementById('add-amount').value);
+  const dt=document.getElementById('add-date').value;
   const note=document.getElementById('add-note').value.trim();
   const fuel=document.getElementById('add-fuel').value;
-  if(!date){toast('⚠️ Pick a date');return;}
-  if(isNaN(amount)||amount<=0){toast('⚠️ Enter a valid amount');return;}
-  bills.push({id:Date.now(),amount,date,note,fuel,image:addImg});
+  if(!dt){toast('Please pick a date');return;}
+  if(isNaN(amt)||amt<=0){toast('Please enter a valid amount');return;}
+  bills.push({id:Date.now(),amount:amt,date:dt,note,fuel,image:addImg});
   bills.sort((a,b)=>a.date.localeCompare(b.date));
-  saveBills();updateUI();clearAddForm();
-  switchTab('home');toast('✅ Bill added!');
+  saveBills();render();clearAddForm();goTab('home');toast('Bill added');
 }
 
 function clearAddForm(){
@@ -829,29 +838,22 @@ function clearAddForm(){
   document.getElementById('add-date').valueAsDate=new Date();
   document.getElementById('add-image').value='';
   addImg=null;
-  document.getElementById('upload-icon').textContent='📎';
-  document.getElementById('upload-title').textContent='Attach Receipt';
-  document.getElementById('upload-prev').style.display='none';
-  document.getElementById('upload-box').classList.remove('has-file');
+  document.getElementById('upload-label').textContent='Attach Receipt';
+  document.getElementById('upload-thumb').style.display='none';
+  document.getElementById('upload-field').classList.remove('attached');
+  document.getElementById('upload-ico').innerHTML='<svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:none;stroke:var(--text2);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>';
 }
 
-function deleteBill(id){
-  bills=bills.filter(b=>b.id!==id);
-  saveBills();updateUI();toast('🗑 Removed');
-}
+function deleteBill(id){bills=bills.filter(b=>b.id!==id);saveBills();render();toast('Removed');}
 
-function clearMonthBills(){
+function clearAll(){
   if(!bills.length)return;
-  if(confirm('Clear all bills for '+MONTHS[selMonth]+' '+selYear+'?')){
-    bills=[];saveBills();updateUI();toast('Cleared');
-  }
+  if(confirm('Clear all bills for '+MO[sM]+' '+sY+'?')){bills=[];saveBills();render();toast('Cleared');}
 }
 
-// EDIT
 function openEdit(id){
-  const b=bills.find(x=>x.id===id);
-  if(!b)return;
-  editId=id;editImg=b.image||null;editImgChanged=false;
+  const b=bills.find(x=>x.id===id);if(!b)return;
+  editId=id;editImg=b.image||null;editImgChg=false;
   document.getElementById('edit-amount').value=b.amount;
   document.getElementById('edit-date').value=b.date;
   document.getElementById('edit-note').value=b.note||'';
@@ -861,49 +863,43 @@ function openEdit(id){
   const row=document.getElementById('rcpt-row');
   if(b.image){
     ico.innerHTML=`<img src="${b.image}" alt="">`;
-    document.getElementById('rcpt-title').textContent='Receipt attached';
-    document.getElementById('rcpt-sub').textContent='Tap to change photo';
-    document.getElementById('rcpt-change').textContent='Change →';
-    row.classList.add('has-file');
+    document.getElementById('rcpt-label').textContent='Receipt attached';
+    document.getElementById('rcpt-sub').textContent='Tap to change';
+    document.getElementById('rcpt-action').textContent='Change';
+    row.classList.add('has');
   }else{
-    ico.innerHTML='📎';
-    document.getElementById('rcpt-title').textContent='No receipt';
+    ico.innerHTML='<svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:none;stroke:var(--text2);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>';
+    document.getElementById('rcpt-label').textContent='No receipt';
     document.getElementById('rcpt-sub').textContent='Tap to attach photo';
-    document.getElementById('rcpt-change').textContent='Add →';
-    row.classList.remove('has-file');
+    document.getElementById('rcpt-action').textContent='Add';
+    row.classList.remove('has');
   }
-  document.getElementById('edit-sheet').classList.add('open');
+  document.getElementById('edit-overlay').classList.add('open');
 }
 
-function closeEdit(){
-  document.getElementById('edit-sheet').classList.remove('open');
-  editId=null;editImgChanged=false;
-}
+function closeEdit(){closeOverlay('edit-overlay');editId=null;editImgChg=false;}
 
 function saveEdit(){
-  const amount=parseFloat(document.getElementById('edit-amount').value);
-  const date=document.getElementById('edit-date').value;
+  const amt=parseFloat(document.getElementById('edit-amount').value);
+  const dt=document.getElementById('edit-date').value;
   const note=document.getElementById('edit-note').value.trim();
   const fuel=document.getElementById('edit-fuel').value;
-  if(!date){toast('⚠️ Pick a date');return;}
-  if(isNaN(amount)||amount<=0){toast('⚠️ Enter valid amount');return;}
-  const idx=bills.findIndex(b=>b.id===editId);
-  if(idx===-1)return;
-  bills[idx]={...bills[idx],amount,date,note,fuel,image:editImgChanged?editImg:bills[idx].image};
+  if(!dt){toast('Please pick a date');return;}
+  if(isNaN(amt)||amt<=0){toast('Enter valid amount');return;}
+  const i=bills.findIndex(b=>b.id===editId);if(i===-1)return;
+  bills[i]={...bills[i],amount:amt,date:dt,note,fuel,image:editImgChg?editImg:bills[i].image};
   bills.sort((a,b)=>a.date.localeCompare(b.date));
-  saveBills();updateUI();closeEdit();toast('✏️ Bill updated!');
+  saveBills();render();closeEdit();toast('Bill updated');
 }
 
-// RENDER
-function updateUI(){
-  const total=bills.reduce((s,b)=>s+b.amount,0);
-  document.getElementById('top-month').textContent=MS[selMonth]+' '+selYear;
-  document.getElementById('total-val').textContent=total.toLocaleString('en-SA',{maximumFractionDigits:2});
-  document.getElementById('bill-ct-chip').textContent=bills.length+' bill'+(bills.length!==1?'s':'');
-  document.getElementById('month-chip').textContent=MONTHS[selMonth]+' '+selYear;
-  document.getElementById('export-sub').textContent=MONTHS[selMonth]+' '+selYear+' — '+bills.length+' bills';
+function render(){
+  const tot=bills.reduce((s,b)=>s+b.amount,0);
+  document.getElementById('top-month').textContent=MS[sM]+' '+sY;
+  document.getElementById('total-val').textContent=tot.toLocaleString('en-SA',{minimumFractionDigits:2,maximumFractionDigits:2});
+  document.getElementById('bill-ct').textContent=bills.length+' bill'+(bills.length!==1?'s':'');
+  document.getElementById('month-pill').textContent=MO[sM]+' '+sY;
+  document.getElementById('export-sub').textContent=MO[sM]+' '+sY+' — '+bills.length+' bills';
   renderBills();
-  renderHistory();
 }
 
 function renderBills(){
@@ -913,87 +909,93 @@ function renderBills(){
   empty.style.display='none';
   list.innerHTML=bills.map((b,i)=>{
     const hasImg=!!b.image;
-    const noRcpt=!hasImg?`<div class="bill-no-rcpt">📎 Attach receipt</div>`:'';
-    return `<div class="bill-item" onclick="openEdit(${b.id})">
-      <div class="bill-num">${String(i+1).padStart(2,'0')}</div>
-      <div class="bill-thumb ${hasImg?'':'no-img'}">
-        ${hasImg?`<img src="${b.image}" alt="">`:'🧾'}
+    const noRcpt=!hasImg?`<div class="bill-noreceipt">No receipt — tap to attach</div>`:'';
+    return `<div class="bill-row" onclick="openEdit(${b.id})">
+      <div class="bill-idx">${String(i+1).padStart(2,'0')}</div>
+      <div class="bill-thumb ${hasImg?'':'empty-thumb'}">
+        ${hasImg?`<img src="${b.image}" alt="">`:'<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>'}
       </div>
-      <div class="bill-info">
+      <div class="bill-meta">
         <div class="bill-date">${fmtDate(b.date)}</div>
-        <div class="bill-note">${b.fuel||'Petrol'}${b.note?' · '+b.note:''}</div>
+        <div class="bill-fuel">${b.fuel||'Petrol'}${b.note?' · '+b.note:''}</div>
         ${noRcpt}
       </div>
       <div class="bill-right">
-        <div class="bill-amount">${sar('14px','var(--accent2)')} ${b.amount.toLocaleString('en-SA',{minimumFractionDigits:2})}</div>
-        <button class="bill-del" onclick="event.stopPropagation();deleteBill(${b.id})">✕</button>
+        <div class="bill-amount">${sarHtml('13px','var(--orange2)')} ${b.amount.toLocaleString('en-SA',{minimumFractionDigits:2})}</div>
+        <button class="del-btn" onclick="event.stopPropagation();deleteBill(${b.id})">
+          <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
       </div>
     </div>`;
   }).join('');
 }
 
-function renderHistory(){
-  const wrap=document.getElementById('history-list');
+function renderHist(){
+  const wrap=document.getElementById('hist-list');
   const keys=[];
   for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith('fl_bills_'))keys.push(k);}
   const entries=keys.map(k=>{
     const p=k.replace('fl_bills_','').split('_');
-    const y=parseInt(p[0]),m=parseInt(p[1]);
-    const data=JSON.parse(localStorage.getItem(k)||'[]');
-    return{y,m,data};
-  }).filter(e=>e.data.length>0&&!(e.m===selMonth&&e.y===selYear))
+    return{y:parseInt(p[0]),m:parseInt(p[1]),data:JSON.parse(localStorage.getItem(k)||'[]')};
+  }).filter(e=>e.data.length>0&&!(e.m===sM&&e.y===sY))
     .sort((a,b)=>b.y!==a.y?b.y-a.y:b.m-a.m);
 
-  if(!entries.length){wrap.innerHTML=`<div class="empty"><div class="e-icon">📅</div><p>No previous months found.</p></div>`;return;}
+  if(!entries.length){
+    wrap.innerHTML=`<div class="empty-state"><div class="empty-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div><div class="empty-text">No previous months yet.</div></div>`;
+    return;
+  }
 
   wrap.innerHTML=entries.map((e,idx)=>{
     const tot=e.data.reduce((s,b)=>s+b.amount,0);
     const rows=e.data.map((b,i)=>`
-      <div class="bill-item">
-        <div class="bill-num">${String(i+1).padStart(2,'0')}</div>
-        <div class="bill-thumb ${b.image?'':'no-img'}" onclick="${b.image?`viewImg('${b.image.replace(/'/g,"\\'")}')`:''}">${b.image?`<img src="${b.image}" alt="">`:'🧾'}</div>
-        <div class="bill-info">
+      <div class="bill-row">
+        <div class="bill-idx">${String(i+1).padStart(2,'0')}</div>
+        <div class="bill-thumb ${b.image?'':'empty-thumb'}" onclick="${b.image?`viewImg('${b.image.replace(/'/g,"\\'")}')`:''}" style="${b.image?'cursor:pointer':''}">
+          ${b.image?`<img src="${b.image}" alt="">`:'<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>'}
+        </div>
+        <div class="bill-meta">
           <div class="bill-date">${fmtDate(b.date)}</div>
-          <div class="bill-note">${b.fuel||'Petrol'}${b.note?' · '+b.note:''}</div>
+          <div class="bill-fuel">${b.fuel||'Petrol'}${b.note?' · '+b.note:''}</div>
         </div>
         <div class="bill-right">
-          <div class="bill-amount">${sar('14px','var(--accent2)')} ${b.amount.toLocaleString('en-SA',{minimumFractionDigits:2})}</div>
+          <div class="bill-amount">${sarHtml('13px','var(--orange2)')} ${b.amount.toLocaleString('en-SA',{minimumFractionDigits:2})}</div>
         </div>
       </div>`).join('');
-    return `<div class="hist-month">
-      <div class="hist-hdr" id="hh${idx}" onclick="toggleHist(this)">
-        <div><div class="hist-name">${MONTHS[e.m]} ${e.y}</div><div class="hist-ct">${e.data.length} bills</div></div>
-        <div style="display:flex;align-items:center;gap:4px;">
-          <div class="hist-total">${sar('14px','var(--accent2)')} ${tot.toLocaleString('en-SA',{minimumFractionDigits:2})}</div>
-          <div class="hist-arr">▾</div>
+    return `<div class="hist-card">
+      <div class="hist-hdr" id="hh${idx}" onclick="togHist(this)">
+        <div><div class="hist-month">${MO[e.m]} ${e.y}</div><div class="hist-count">${e.data.length} bills</div></div>
+        <div class="hist-right">
+          <div class="hist-total">${sarHtml('13px','var(--orange2)')} ${tot.toLocaleString('en-SA',{minimumFractionDigits:2})}</div>
+          <div class="hist-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
         </div>
       </div>
-      <div class="hist-bills" id="hb${idx}">${rows}</div>
+      <div class="hist-body" id="hb${idx}">${rows}</div>
     </div>`;
   }).join('');
 }
 
-function toggleHist(hdr){
+function togHist(hdr){
   hdr.classList.toggle('open');
   const idx=hdr.id.replace('hh','');
   document.getElementById('hb'+idx).classList.toggle('open');
 }
 
-function switchTab(name){
+function goTab(name){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('page-'+name).classList.add('active');
   document.getElementById('tab-'+name).classList.add('active');
-  document.querySelector('.scroll-area').scrollTop=0;
+  document.querySelector('.scroll').scrollTop=0;
+  if(name==='history')renderHist();
 }
 
-function viewImg(src){document.getElementById('img-modal-src').src=src;document.getElementById('img-modal').classList.add('open');}
-function closeImgModal(){document.getElementById('img-modal').classList.remove('open');}
+function viewImg(src){document.getElementById('imgmodal-src').src=src;document.getElementById('imgmodal').classList.add('open');}
+function closeImg(){document.getElementById('imgmodal').classList.remove('open');}
 
 function toast(msg){
   const t=document.getElementById('toast');
   t.textContent=msg;t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2600);
+  setTimeout(()=>t.classList.remove('show'),2400);
 }
 
 function fmtDate(d){
@@ -1003,25 +1005,25 @@ function fmtDate(d){
 }
 
 async function generatePDF(){
-  if(!bills.length){toast('⚠️ No bills this month');return;}
+  if(!bills.length){toast('No bills this month');return;}
   const name=localStorage.getItem('fl_emp-name')||'—';
   const dept=localStorage.getItem('fl_emp-dept')||'—';
   const vehicle=localStorage.getItem('fl_emp-vehicle')||'—';
   const manager=localStorage.getItem('fl_emp-manager')||'—';
-  const period=MONTHS[selMonth]+' '+selYear;
+  const period=MO[sM]+' '+sY;
   const total=bills.reduce((s,b)=>s+b.amount,0);
   const{jsPDF}=window.jspdf;
   const doc=new jsPDF({unit:'mm',format:'a4'});
   const W=210,PL=16,PR=16;let y=16;
-  doc.setFillColor(8,11,18);doc.rect(0,0,W,40,'F');
-  doc.setFillColor(255,107,43);doc.rect(0,40,W,2.5,'F');
-  doc.setFont('helvetica','bold');doc.setFontSize(20);doc.setTextColor(255,255,255);
+  doc.setFillColor(10,10,10);doc.rect(0,0,W,40,'F');
+  doc.setFillColor(249,115,22);doc.rect(0,40,W,2,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(20);doc.setTextColor(245,245,245);
   doc.text('FuelLog — Expense Report',PL,y+10);
-  doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(160,170,200);
+  doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(160,160,160);
   doc.text('Company Vehicle Fuel Reimbursement  |  Period: '+period,PL,y+20);
   doc.text('Generated: '+new Date().toLocaleDateString('en-SA',{day:'2-digit',month:'long',year:'numeric'}),W-PR,y+20,{align:'right'});
   y=52;
-  doc.setFillColor(20,25,44);doc.roundedRect(PL,y,W-PL-PR,28,3,3,'F');
+  doc.setFillColor(20,20,28);doc.roundedRect(PL,y,W-PL-PR,28,3,3,'F');
   doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(100,140,220);
   doc.text('EMPLOYEE DETAILS',PL+6,y+7);
   doc.setFont('helvetica','normal');doc.setFontSize(10.5);doc.setTextColor(230,235,255);
@@ -1029,14 +1031,14 @@ async function generatePDF(){
   doc.text('Vehicle: '+vehicle,PL+6,y+24);doc.text('Approver: '+manager,W/2,y+24);
   y+=36;
   const c=[PL,44,78,126,158,180];
-  doc.setFillColor(255,107,43);doc.rect(PL,y,W-PL-PR,9,'F');
+  doc.setFillColor(249,115,22);doc.rect(PL,y,W-PL-PR,9,'F');
   doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(255,255,255);
   ['#','Date','Fuel','Amount (SAR)','Notes','Rcpt'].forEach((h,i)=>doc.text(h,c[i]+2,y+6));
   y+=9;
   bills.forEach((b,i)=>{
     if(y+11>282){doc.addPage();y=20;}
-    if(i%2===0){doc.setFillColor(14,18,34);doc.rect(PL,y,W-PL-PR,10,'F');}
-    const tc=i%2===0?[200,210,240]:[30,30,50];
+    if(i%2===0){doc.setFillColor(18,18,24);doc.rect(PL,y,W-PL-PR,10,'F');}
+    const tc=i%2===0?[210,215,240]:[40,40,60];
     doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(...tc);
     doc.text(String(i+1).padStart(2,'0'),c[0]+2,y+7);
     doc.text(fmtDate(b.date),c[1]+2,y+7);
@@ -1044,15 +1046,13 @@ async function generatePDF(){
     doc.setFont('helvetica','bold');
     doc.text('SAR '+b.amount.toLocaleString('en-SA',{minimumFractionDigits:2}),c[3]+2,y+7);
     doc.setFont('helvetica','normal');
-    const note=b.note?(b.note.length>20?b.note.slice(0,18)+'…':b.note):'—';
-    doc.text(note,c[4]+2,y+7);
-    if(b.image){try{doc.addImage(b.image,'JPEG',c[5]+1,y+1,15,8);}catch(e){doc.setTextColor(80,180,80);doc.text('✓',c[5]+2,y+7);}}
-    else{doc.setTextColor(160,160,180);doc.text('—',c[5]+2,y+7);}
-    doc.setDrawColor(30,40,70);doc.setLineWidth(0.2);doc.line(PL,y+10,W-PR,y+10);
-    y+=10;
+    doc.text(b.note?(b.note.length>20?b.note.slice(0,18)+'…':b.note):'—',c[4]+2,y+7);
+    if(b.image){try{doc.addImage(b.image,'JPEG',c[5]+1,y+1,15,8);}catch(e){doc.setTextColor(80,180,80);doc.text('Y',c[5]+2,y+7);}}
+    else{doc.setTextColor(100,100,120);doc.text('—',c[5]+2,y+7);}
+    doc.setDrawColor(30,30,50);doc.setLineWidth(0.2);doc.line(PL,y+10,W-PR,y+10);y+=10;
   });
   y+=8;if(y+15>280){doc.addPage();y=20;}
-  doc.setFillColor(255,107,43);doc.roundedRect(PL,y,W-PL-PR,14,3,3,'F');
+  doc.setFillColor(249,115,22);doc.roundedRect(PL,y,W-PL-PR,14,3,3,'F');
   doc.setFont('helvetica','bold');doc.setFontSize(11);doc.setTextColor(255,255,255);
   doc.text('TOTAL  ('+bills.length+' bills)',PL+5,y+9);
   doc.text('SAR '+total.toLocaleString('en-SA',{minimumFractionDigits:2}),W-PR-5,y+9,{align:'right'});
@@ -1065,9 +1065,9 @@ async function generatePDF(){
   doc.text('Employee Signature',PL,y+6);doc.text('Date: __________',PL,y+12);
   doc.text('Manager / Approver',W/2+10,y+6);doc.text('Date: __________',W/2+10,y+12);
   const tp=doc.internal.getNumberOfPages();
-  for(let p=1;p<=tp;p++){doc.setPage(p);doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(140,150,180);doc.text(`FuelLog  |  Page ${p} of ${tp}  |  Confidential`,W/2,292,{align:'center'});}
-  doc.save(`FuelLog_${period.replace(' ','_')}_${(name||'Employee').replace(/\s/g,'_')}.pdf`);
-  toast('📄 PDF exported!');
+  for(let p=1;p<=tp;p++){doc.setPage(p);doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(140,150,180);doc.text('FuelLog  |  Page '+p+' of '+tp+'  |  Confidential',W/2,292,{align:'center'});}
+  doc.save('FuelLog_'+period.replace(' ','_')+'_'+(name||'Employee').replace(/\s/g,'_')+'.pdf');
+  toast('PDF exported');
 }
 
 init();
