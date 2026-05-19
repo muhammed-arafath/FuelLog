@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="FuelLog">
+<meta name="theme-color" content="#080b12">
+<meta name="description" content="Track company vehicle fuel bills and export PDF reports">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<title>FuelLog</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Syne+Mono&display=swap" rel="stylesheet">
+<style>
+  /* Official Saudi Riyal Symbol — inline SVG approach */
+  .sar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .sar svg {
+    width: 1em; height: 1em;
+    fill: currentColor;
+    vertical-align: middle;
+  }
+  :root {
+    --bg: #080b12;
+    --surface: rgba(255,255,255,0.05);
+    --surface2: rgba(255,255,255,0.09);
+    --border: rgba(255,255,255,0.09);
+    --border2: rgba(255,255,255,0.15);
+    --accent: #0066ff;
+    --accent2: #5599ff;
+    --accent-glow: rgba(0,102,255,0.25);
+    --fuel: #ff6b2b;
+    --fuel2: #ff9f6b;
+    --fuel-glow: rgba(255,107,43,0.22);
+    --text: #eef2ff;
+    --muted: rgba(238,242,255,0.42);
+    --muted2: rgba(238,242,255,0.22);
+    --success: #34d399;
+    --danger: #ff4d6d;
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --r: 20px;
+    --rsm: 13px;
+  }
+
+- { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+html, body { width: 100%; height: 100%; background: var(–bg); color: var(–text); font-family: ‘Syne’, sans-serif; overflow: hidden; }
+
+#app { width: 100%; height: 100%; display: flex; flex-direction: column; position: relative; overflow: hidden; }
+
+.orb { position: fixed; border-radius: 50%; filter: blur(90px); pointer-events: none; z-index: 0; }
+.orb1 { width: 340px; height: 340px; background: rgba(0,102,255,0.14); top: -120px; right: -80px; }
+.orb2 { width: 280px; height: 280px; background: rgba(255,107,43,0.10); bottom: 60px; left: -70px; }
+.orb3 { width: 200px; height: 200px; background: rgba(52,211,153,0.06); top: 45%; left: 45%; transform: translate(-50%,-50%); }
+
+.status-bar { height: calc(var(–safe-top) + 10px); flex-shrink: 0; z-index: 10; }
+
+/* TOP BAR */
+.top-bar {
+padding: 0 20px 14px;
+display: flex; align-items: center; justify-content: space-between;
+z-index: 10; flex-shrink: 0;
+}
+
+.brand { display: flex; align-items: center; gap: 10px; }
+
+.brand-icon {
+width: 38px; height: 38px;
+background: linear-gradient(135deg, var(–fuel), #ff9040);
+border-radius: 11px;
+display: flex; align-items: center; justify-content: center;
+font-size: 19px;
+box-shadow: 0 4px 18px var(–fuel-glow);
+flex-shrink: 0;
+}
+
+.brand-sub { display: flex; flex-direction: column; }
+
+.brand-name { font-size: 20px; font-weight: 800; letter-spacing: -0.03em; color: var(–text); line-height: 1; }
+.brand-tag { font-size: 10px; font-weight: 600; color: var(–muted); letter-spacing: 0.06em; margin-top: 2px; }
+
+.month-pill {
+background: var(–surface2); border: 1px solid var(–border2);
+border-radius: 100px; padding: 7px 14px;
+display: flex; align-items: center; gap: 5px;
+font-size: 13px; font-weight: 700; color: var(–text);
+cursor: pointer;
+backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+}
+
+/* SCROLL */
+.scroll-area {
+flex: 1; overflow-y: auto; overflow-x: hidden;
+-webkit-overflow-scrolling: touch;
+padding: 0 15px;
+padding-bottom: calc(var(–safe-bottom) + 104px);
+z-index: 5; position: relative;
+}
+.scroll-area::-webkit-scrollbar { display: none; }
+
+/* HERO CARD */
+.total-card {
+background: linear-gradient(135deg, rgba(0,102,255,0.16), rgba(0,102,255,0.04));
+border: 1px solid rgba(0,102,255,0.28);
+border-radius: var(–r); padding: 22px 20px 18px;
+margin-bottom: 14px; position: relative; overflow: hidden;
+backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+}
+
+.total-card::before {
+content: ‘⛽’; position: absolute; right: 18px; top: 14px;
+font-size: 54px; opacity: 0.10;
+}
+
+.total-label {
+font-size: 10px; font-weight: 700; letter-spacing: 0.14em;
+text-transform: uppercase; color: var(–accent2); margin-bottom: 5px;
+}
+
+.total-amount {
+font-size: 42px; font-weight: 800; letter-spacing: -0.04em;
+line-height: 1; color: var(–text);
+display: flex; align-items: center; gap: 8px;
+}
+
+.total-amount .rsym {
+font-size: 32px; color: var(–accent2);
+display: inline-flex; align-items: center;
+}
+
+.total-meta { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+
+.meta-chip {
+background: rgba(255,255,255,0.07); border-radius: 8px;
+padding: 5px 10px; font-size: 12px; font-weight: 600;
+color: var(–muted); font-family: ‘Syne Mono’, monospace;
+}
+
+/* SECTION HDR */
+.section-hdr {
+display: flex; align-items: center; justify-content: space-between;
+margin: 18px 3px 10px;
+}
+
+.section-title {
+font-size: 11px; font-weight: 700; letter-spacing: 0.10em;
+text-transform: uppercase; color: var(–muted);
+}
+
+.section-action {
+font-size: 13px; font-weight: 600; color: var(–fuel);
+cursor: pointer; padding: 4px 8px; border-radius: 8px;
+background: transparent; border: none; color: var(–fuel);
+transition: background 0.15s;
+}
+
+.section-action:active { background: var(–fuel-glow); }
+
+/* GLASS CARD */
+.glass-card {
+background: var(–surface); border: 1px solid var(–border);
+border-radius: var(–r);
+backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+overflow: hidden; margin-bottom: 12px;
+}
+
+/* BILL ITEM */
+.bill-item {
+display: flex; align-items: center; gap: 11px;
+padding: 13px 14px; border-bottom: 1px solid var(–border);
+animation: fadeUp 0.28s cubic-bezier(0.34,1.4,0.64,1);
+cursor: pointer;
+transition: background 0.15s;
+}
+
+.bill-item:active { background: rgba(255,255,255,0.04); }
+@keyframes fadeUp {
+from { opacity: 0; transform: translateY(10px); }
+to { opacity: 1; transform: translateY(0); }
+}
+
+.bill-item:last-child { border-bottom: none; }
+
+.bill-num {
+font-family: ‘Syne Mono’, monospace; font-size: 11px;
+color: var(–muted2); width: 18px; text-align: center; flex-shrink: 0;
+}
+
+.bill-receipt {
+width: 42px; height: 42px; border-radius: 10px; overflow: visible;
+flex-shrink: 0; background: rgba(255,255,255,0.06);
+display: flex; align-items: center; justify-content: center;
+font-size: 19px; cursor: pointer; position: relative;
+}
+
+.bill-receipt img { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; }
+
+/* orange ring on no-receipt thumb */
+.bill-receipt.no-img {
+border: 1.5px dashed rgba(255,107,43,0.45);
+background: rgba(255,107,43,0.07);
+}
+
+.bill-info { flex: 1; min-width: 0; }
+
+.bill-date { font-size: 13px; font-weight: 700; color: var(–text); }
+
+.bill-note {
+font-size: 12px; color: var(–muted); margin-top: 2px;
+white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+max-width: 130px;
+}
+
+/* no-receipt shown BELOW the date/note, inside bill-info */
+.bill-no-rcpt {
+display: inline-flex; align-items: center; gap: 4px;
+margin-top: 4px;
+background: rgba(255,107,43,0.14);
+border: 1px solid rgba(255,107,43,0.28);
+border-radius: 6px; padding: 2px 7px;
+font-size: 10px; font-weight: 700; color: var(–fuel2);
+cursor: pointer;
+}
+
+.bill-right {
+display: flex; flex-direction: column; align-items: flex-end;
+gap: 6px; flex-shrink: 0; min-width: 0;
+}
+
+.bill-amount {
+font-family: ‘Syne Mono’, monospace; font-size: 15px;
+font-weight: 700; color: var(–fuel2); white-space: nowrap;
+}
+
+.bill-actions { display: flex; gap: 6px; }
+
+.bill-btn {
+width: 30px; height: 30px; border-radius: 9px;
+display: flex; align-items: center; justify-content: center;
+font-size: 14px; cursor: pointer; border: none; transition: background 0.15s;
+position: relative; z-index: 2;
+}
+
+.bill-btn.del { background: rgba(255,77,109,0.12); }
+.bill-btn.del:active { background: rgba(255,77,109,0.30); }
+
+/* EMPTY */
+.empty { text-align: center; padding: 44px 20px; color: var(–muted); }
+.empty .e-icon { font-size: 42px; opacity: 0.28; margin-bottom: 12px; }
+.empty p { font-size: 14px; line-height: 1.6; }
+
+/* FORM FIELDS — clean redesign */
+.field { display: flex; flex-direction: column; gap: 7px; }
+
+.field label {
+font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+text-transform: uppercase; color: var(–accent2); padding-left: 4px;
+}
+
+.field input, .field select {
+font-family: ‘Syne’, sans-serif; font-size: 15px; font-weight: 500;
+color: var(–text);
+background: rgba(255,255,255,0.07);
+border: 1.5px solid rgba(255,255,255,0.11);
+border-radius: 14px;
+padding: 14px 16px;
+outline: none; -webkit-appearance: none;
+transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+width: 100%;
+}
+
+.field input::placeholder { color: rgba(238,242,255,0.25); font-weight: 400; font-size: 14px; }
+
+.field input:focus, .field select:focus {
+border-color: var(–accent);
+background: rgba(0,102,255,0.08);
+box-shadow: 0 0 0 3px rgba(0,102,255,0.12);
+}
+
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* ADD PAGE */
+.add-form { padding: 18px; display: flex; flex-direction: column; gap: 12px; }
+
+.amount-row {
+display: flex; align-items: center; gap: 8px;
+background: rgba(255,107,43,0.08); border: 1px solid rgba(255,107,43,0.28);
+border-radius: var(–rsm); padding: 13px 15px;
+}
+
+.amount-row .rsym { font-size: 24px; font-weight: 800; color: var(–fuel2); line-height: 1; }
+
+.amount-row input {
+flex: 1; font-family: ‘Syne Mono’, monospace; font-size: 30px;
+font-weight: 700; color: var(–text); background: none;
+border: none; outline: none; padding: 0; min-width: 0;
+}
+
+.amount-row input::placeholder { color: var(–muted2); }
+
+.upload-area {
+background: rgba(255,255,255,0.04); border: 1.5px dashed var(–border2);
+border-radius: var(–rsm); padding: 14px 16px;
+display: flex; align-items: center; gap: 12px;
+cursor: pointer; position: relative;
+transition: border-color 0.2s, background 0.2s;
+}
+
+.upload-area.has-file { border-color: var(–success); background: rgba(52,211,153,0.06); }
+.upload-area input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+
+.upload-icon {
+width: 40px; height: 40px; background: rgba(255,255,255,0.07);
+border-radius: 10px; display: flex; align-items: center; justify-content: center;
+font-size: 18px; flex-shrink: 0;
+}
+
+.upload-text .ut-title { font-size: 14px; font-weight: 600; color: var(–text); }
+.upload-text .ut-sub { font-size: 12px; color: var(–muted); margin-top: 2px; }
+
+.upload-prev { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; border: 1px solid var(–border2); display: none; }
+
+.primary-btn {
+background: linear-gradient(135deg, var(–accent), #3385ff);
+color: white; font-family: ‘Syne’, sans-serif; font-size: 16px;
+font-weight: 700; padding: 15px; border: none; border-radius: var(–rsm);
+cursor: pointer; box-shadow: 0 6px 22px var(–accent-glow);
+transition: transform 0.15s, box-shadow 0.15s;
+display: flex; align-items: center; justify-content: center; gap: 7px;
+}
+
+.primary-btn:active { transform: scale(0.97); box-shadow: 0 2px 10px var(–accent-glow); }
+
+/* PROFILE PAGE */
+.emp-form { padding: 22px 20px; display: flex; flex-direction: column; gap: 18px; }
+
+.export-card {
+background: linear-gradient(135deg, rgba(52,211,153,0.12), rgba(52,211,153,0.03));
+border: 1px solid rgba(52,211,153,0.22);
+border-radius: var(–r); padding: 18px 20px;
+display: flex; align-items: center; gap: 14px;
+cursor: pointer; transition: transform 0.15s; margin-bottom: 12px;
+}
+
+.export-card:active { transform: scale(0.98); }
+
+.export-icon {
+width: 48px; height: 48px; background: rgba(52,211,153,0.14);
+border-radius: 13px; display: flex; align-items: center; justify-content: center;
+font-size: 22px; flex-shrink: 0;
+}
+
+.export-info .ei-title { font-size: 16px; font-weight: 700; color: var(–text); }
+.export-info .ei-sub { font-size: 12px; color: var(–muted); margin-top: 3px; }
+.export-arrow { font-size: 18px; color: var(–success); margin-left: auto; }
+
+/* HISTORY */
+.history-month {
+background: var(–surface); border: 1px solid var(–border);
+border-radius: var(–r); margin-bottom: 10px; overflow: hidden;
+backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+}
+
+.history-month-hdr {
+display: flex; align-items: center; justify-content: space-between;
+padding: 14px 16px; cursor: pointer; border-bottom: 1px solid transparent;
+transition: border-color 0.2s;
+}
+
+.history-month-hdr.open { border-bottom-color: var(–border); }
+
+.hist-month-name { font-size: 15px; font-weight: 700; color: var(–text); }
+.hist-month-ct { font-size: 12px; color: var(–muted); margin-top: 2px; }
+
+.hist-month-total { font-family: ‘Syne Mono’, monospace; font-size: 14px; font-weight: 700; color: var(–fuel2); }
+.hist-month-arrow { font-size: 11px; color: var(–muted); margin-left: 8px; transition: transform 0.2s; }
+.history-month-hdr.open .hist-month-arrow { transform: rotate(180deg); }
+
+.history-bills { display: none; }
+.history-bills.open { display: block; }
+
+/* TAB BAR */
+.tab-bar {
+position: fixed; bottom: 0; left: 0; right: 0;
+padding-bottom: var(–safe-bottom);
+background: rgba(8,11,18,0.88); border-top: 1px solid var(–border);
+backdrop-filter: blur(26px); -webkit-backdrop-filter: blur(26px);
+display: flex; z-index: 100;
+}
+
+.tab {
+flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
+padding: 10px 8px; cursor: pointer; border: none; background: none;
+}
+
+.tab-icon { font-size: 22px; line-height: 1; }
+.tab-label { font-size: 10px; font-weight: 700; letter-spacing: 0.05em; color: var(–muted); }
+.tab.active .tab-label { color: var(–accent2); }
+
+.page { display: none; }
+.page.active { display: block; }
+
+/* ── MONTH SHEET ── */
+.sheet-overlay {
+display: none; position: fixed; inset: 0;
+background: rgba(0,0,0,0.65); z-index: 200;
+align-items: flex-end;
+backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+}
+.sheet-overlay.open { display: flex; }
+
+.sheet {
+width: 100%; background: #0f1320;
+border-top-left-radius: 28px; border-top-right-radius: 28px;
+padding: 14px 20px calc(var(–safe-bottom) + 20px);
+animation: sheetUp 0.28s cubic-bezier(0.34,1.4,0.64,1);
+}
+
+@keyframes sheetUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+.sheet-handle { width: 36px; height: 4px; background: var(–border2); border-radius: 2px; margin: 0 auto 18px; }
+.sheet-title { font-size: 17px; font-weight: 800; margin-bottom: 14px; color: var(–text); }
+
+.year-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+
+.year-btn {
+width: 38px; height: 38px; background: var(–surface2);
+border: 1px solid var(–border2); border-radius: 11px;
+display: flex; align-items: center; justify-content: center;
+font-size: 20px; cursor: pointer; color: var(–text);
+}
+
+.year-label { font-size: 20px; font-weight: 800; color: var(–text); }
+
+.month-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 14px; }
+
+.month-opt {
+padding: 11px 4px; text-align: center; border-radius: 11px;
+font-size: 13px; font-weight: 700; color: var(–muted);
+background: var(–surface); border: 1px solid var(–border);
+cursor: pointer; transition: all 0.15s;
+}
+
+.month-opt.sel { background: var(–accent); color: #fff; border-color: var(–accent); }
+
+.sheet-done {
+width: 100%; background: var(–accent); color: white;
+font-family: ‘Syne’, sans-serif; font-size: 16px; font-weight: 700;
+padding: 15px; border: none; border-radius: 14px; cursor: pointer;
+}
+
+/* ── EDIT SHEET ── */
+.edit-sheet-overlay {
+display: none; position: fixed; inset: 0;
+background: rgba(0,0,0,0.72); z-index: 250;
+align-items: flex-end;
+backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+}
+
+.edit-sheet-overlay.open { display: flex; }
+
+.edit-sheet {
+width: 100%; background: #0f1320;
+border-top-left-radius: 28px; border-top-right-radius: 28px;
+padding: 14px 18px calc(var(–safe-bottom) + 18px);
+animation: sheetUp 0.28s cubic-bezier(0.34,1.4,0.64,1);
+max-height: 92vh; overflow-y: auto;
+}
+
+.edit-sheet::-webkit-scrollbar { display: none; }
+
+.edit-title-row {
+display: flex; align-items: center; justify-content: space-between;
+margin-bottom: 18px;
+}
+
+.edit-title { font-size: 18px; font-weight: 800; color: var(–text); }
+
+.edit-close {
+width: 34px; height: 34px; background: rgba(255,255,255,0.08);
+border: none; border-radius: 10px;
+font-size: 16px; color: var(–muted); cursor: pointer;
+display: flex; align-items: center; justify-content: center;
+}
+
+.edit-form { display: flex; flex-direction: column; gap: 12px; }
+
+.edit-amount-row {
+display: flex; align-items: center; gap: 8px;
+background: rgba(255,107,43,0.08); border: 1px solid rgba(255,107,43,0.28);
+border-radius: var(–rsm); padding: 12px 14px;
+}
+
+.edit-amount-row .rsym { font-size: 22px; font-weight: 800; color: var(–fuel2); }
+
+.edit-amount-row input {
+flex: 1; font-family: ‘Syne Mono’, monospace; font-size: 28px;
+font-weight: 700; color: var(–text); background: none;
+border: none; outline: none; padding: 0; min-width: 0;
+}
+
+.edit-receipt-row {
+display: flex; align-items: center; gap: 12px;
+background: rgba(255,255,255,0.04); border: 1.5px dashed var(–border2);
+border-radius: var(–rsm); padding: 13px 14px;
+cursor: pointer; position: relative;
+transition: border-color 0.2s, background 0.2s;
+}
+
+.edit-receipt-row.has-file { border-color: var(–success); background: rgba(52,211,153,0.06); }
+.edit-receipt-row input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+
+.erc-icon {
+width: 42px; height: 42px; border-radius: 10px; overflow: hidden;
+background: rgba(255,255,255,0.07); flex-shrink: 0;
+display: flex; align-items: center; justify-content: center; font-size: 20px;
+}
+
+.erc-icon img { width: 100%; height: 100%; object-fit: cover; }
+
+.erc-text .erc-title { font-size: 14px; font-weight: 600; color: var(–text); }
+.erc-text .erc-sub { font-size: 12px; color: var(–muted); margin-top: 2px; }
+
+.erc-change {
+margin-left: auto; font-size: 12px; font-weight: 700;
+color: var(–accent2); flex-shrink: 0;
+}
+
+.edit-save-btn {
+background: linear-gradient(135deg, var(–accent), #3385ff);
+color: white; font-family: ‘Syne’, sans-serif; font-size: 16px;
+font-weight: 700; padding: 15px; border: none; border-radius: var(–rsm);
+cursor: pointer; width: 100%; margin-top: 4px;
+display: flex; align-items: center; justify-content: center; gap: 8px;
+box-shadow: 0 6px 22px var(–accent-glow);
+}
+
+/* IMG MODAL */
+.img-modal {
+display: none; position: fixed; inset: 0;
+background: rgba(0,0,0,0.92); z-index: 300;
+align-items: center; justify-content: center;
+}
+.img-modal.open { display: flex; }
+.img-modal img { max-width: 94%; max-height: 86vh; border-radius: 16px; }
+.img-close {
+position: absolute; top: calc(var(–safe-top) + 16px); right: 18px;
+background: rgba(255,255,255,0.13); border: none; color: white;
+font-size: 17px; width: 36px; height: 36px; border-radius: 10px;
+cursor: pointer; display: flex; align-items: center; justify-content: center;
+}
+
+/* TOAST */
+.toast {
+position: fixed;
+bottom: calc(var(–safe-bottom) + 92px); left: 50%;
+transform: translateX(-50%) translateY(16px);
+background: rgba(15,19,32,0.96); color: var(–text);
+font-size: 14px; font-weight: 600;
+padding: 11px 20px; border-radius: 100px;
+border: 1px solid var(–border2); white-space: nowrap;
+opacity: 0; transition: all 0.28s cubic-bezier(0.34,1.4,0.64,1);
+z-index: 999; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+}
+
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* placeholder removed */
+</style>
+
+</head>
+<body>
+<div id="app">
+
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+
+  <div class="status-bar"></div>
+
+  <!-- TOP BAR -->
+
+  <div class="top-bar">
+    <div class="brand">
+      <div class="brand-icon">⛽</div>
+      <div class="brand-sub">
+        <div class="brand-name">FuelLog</div>
+        <div class="brand-tag">Vehicle Expense</div>
+      </div>
+    </div>
+    <div class="month-pill" onclick="openMonthSheet()">
+      <span id="top-month">—</span> <span style="font-size:10px;opacity:0.6;">▾</span>
+    </div>
+  </div>
+
+  <!-- SCROLL -->
+
+  <div class="scroll-area">
+
+```
+<!-- HOME -->
+<div class="page active" id="page-home">
+  <div class="total-card">
+    <div class="total-label">Monthly Total</div>
+    <div class="total-amount"><span class="rsym" id="hero-sar"></span><span id="total-val">0</span></div>
+    <div class="total-meta">
+      <div class="meta-chip" id="bill-ct-chip">0 bills</div>
+      <div class="meta-chip" id="month-period-chip">—</div>
+    </div>
+  </div>
+
+  <div class="section-hdr">
+    <div class="section-title">Bills</div>
+    <button class="section-action" onclick="clearMonthBills()">Clear All</button>
+  </div>
+
+  <div class="glass-card" id="bills-list-wrap">
+    <div class="empty" id="bills-empty">
+      <div class="e-icon">🧾</div>
+      <p>No bills yet.<br>Tap <b>+</b> below to add one.</p>
+    </div>
+    <div id="bills-list"></div>
+  </div>
+</div>
+
+<!-- ADD -->
+<div class="page" id="page-add">
+  <div class="section-hdr" style="margin-top:4px;">
+    <div class="section-title">New Bill</div>
+  </div>
+  <div class="glass-card">
+    <div class="add-form">
+      <div class="amount-row">
+        <span id="add-sar-sym" style="font-size:24px;color:var(--fuel2);flex-shrink:0;"></span>
+        <input type="number" id="add-amount" placeholder="0" inputmode="decimal" min="0" step="0.01">
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Date</label>
+          <input type="date" id="add-date">
+        </div>
+        <div class="field">
+          <label>Fuel Type</label>
+          <select id="add-fuel">
+            <option>Petrol</option>
+            <option>Diesel</option>
+            <option>CNG</option>
+            <option>EV Charge</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>Notes (optional)</label>
+        <input type="text" id="add-note" placeholder="Station, trip details…">
+      </div>
+      <div class="upload-area" id="upload-area">
+        <div class="upload-icon" id="upload-icon">📎</div>
+        <div class="upload-text">
+          <div class="ut-title" id="upload-title">Attach Receipt</div>
+          <div class="ut-sub">Photo or image of bill</div>
+        </div>
+        <img id="upload-prev" class="upload-prev" alt="">
+        <input type="file" id="add-image" accept="image/*" capture="environment">
+      </div>
+      <button class="primary-btn" onclick="addBill()">＋ Add Bill</button>
+    </div>
+  </div>
+</div>
+
+<!-- HISTORY -->
+<div class="page" id="page-history">
+  <div class="section-hdr" style="margin-top:4px;">
+    <div class="section-title">Past Months</div>
+  </div>
+  <div id="history-list">
+    <div class="empty"><div class="e-icon">📅</div><p>No previous months found.</p></div>
+  </div>
+</div>
+
+<!-- PROFILE -->
+<div class="page" id="page-profile">
+  <div class="section-hdr" style="margin-top:4px;">
+    <div class="section-title">Your Details</div>
+  </div>
+  <div class="glass-card">
+    <div class="emp-form">
+      <div class="field">
+        <label>Full Name</label>
+        <input type="text" id="emp-name" placeholder="Your full name">
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Department</label>
+          <input type="text" id="emp-dept" placeholder="e.g. Sales">
+        </div>
+        <div class="field">
+          <label>Vehicle No.</label>
+          <input type="text" id="emp-vehicle" placeholder="KL-07-AB-1234">
+        </div>
+      </div>
+      <div class="field">
+        <label>Manager / Approver</label>
+        <input type="text" id="emp-manager" placeholder="Approver's name">
+      </div>
+    </div>
+  </div>
+
+  <div class="section-hdr">
+    <div class="section-title">Export PDF</div>
+  </div>
+
+  <div class="export-card" onclick="generatePDF()">
+    <div class="export-icon">📄</div>
+    <div class="export-info">
+      <div class="ei-title">Export Report</div>
+      <div class="ei-sub" id="export-sub">Current month — 0 bills</div>
+    </div>
+    <div class="export-arrow">→</div>
+  </div>
+</div>
+```
+
+  </div><!-- /scroll-area -->
+
+  <!-- TAB BAR -->
+
+  <div class="tab-bar">
+    <button class="tab active" id="tab-home" onclick="switchTab('home')">
+      <div class="tab-icon">🏠</div><div class="tab-label">Home</div>
+    </button>
+    <button class="tab" id="tab-add" onclick="switchTab('add')">
+      <div class="tab-icon">➕</div><div class="tab-label">Add</div>
+    </button>
+    <button class="tab" id="tab-history" onclick="switchTab('history')">
+      <div class="tab-icon">📅</div><div class="tab-label">History</div>
+    </button>
+    <button class="tab" id="tab-profile" onclick="switchTab('profile')">
+      <div class="tab-icon">👤</div><div class="tab-label">Profile</div>
+    </button>
+  </div>
+
+</div>
+
+<!-- MONTH SHEET -->
+
+<div class="sheet-overlay" id="month-sheet" onclick="sheetBgClick(event)">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">Select Period</div>
+    <div class="year-row">
+      <div class="year-btn" onclick="changeYear(-1)">‹</div>
+      <div class="year-label" id="sheet-year"></div>
+      <div class="year-btn" onclick="changeYear(1)">›</div>
+    </div>
+    <div class="month-grid" id="month-grid"></div>
+    <button class="sheet-done" onclick="applyMonth()">Done</button>
+  </div>
+</div>
+
+<!-- EDIT SHEET -->
+
+<div class="edit-sheet-overlay" id="edit-sheet-overlay" onclick="editSheetBgClick(event)">
+  <div class="edit-sheet">
+    <div class="sheet-handle"></div>
+    <div class="edit-title-row">
+      <div class="edit-title">Edit Bill</div>
+      <button class="edit-close" onclick="closeEditSheet()">✕</button>
+    </div>
+    <div class="edit-form">
+      <div class="edit-amount-row">
+        <span id="edit-sar-sym" style="font-size:24px;color:var(--fuel2);flex-shrink:0;"></span>
+        <input type="number" id="edit-amount" placeholder="0" inputmode="decimal" min="0" step="0.01">
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Date</label>
+          <input type="date" id="edit-date">
+        </div>
+        <div class="field">
+          <label>Fuel Type</label>
+          <select id="edit-fuel">
+            <option>Petrol</option>
+            <option>Diesel</option>
+            <option>CNG</option>
+            <option>EV Charge</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>Notes</label>
+        <input type="text" id="edit-note" placeholder="Station, trip details…">
+      </div>
+
+```
+  <!-- Receipt section -->
+  <div class="edit-receipt-row" id="edit-receipt-row">
+    <div class="erc-icon" id="erc-icon">📎</div>
+    <div class="erc-text">
+      <div class="erc-title" id="erc-title">Attach Receipt</div>
+      <div class="erc-sub" id="erc-sub">Tap to add or change</div>
+    </div>
+    <div class="erc-change" id="erc-change">Add →</div>
+    <input type="file" id="edit-image" accept="image/*" capture="environment">
+  </div>
+
+  <button class="edit-save-btn" onclick="saveEdit()">✓ Save Changes</button>
+</div>
+```
+
+  </div>
+</div>
+
+<!-- IMAGE MODAL -->
+
+<div class="img-modal" id="img-modal" onclick="closeImgModal()">
+  <button class="img-close">✕</button>
+  <img id="img-modal-src" src="" alt="Receipt">
+</div>
+
+<!-- TOAST -->
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script>
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const MS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+let selMonth, selYear, tempMonth, tempYear;
+let bills = [];
+let addImgData = null;
+let editId = null, editImgData = null, editImgChanged = false;
+
+// ── SAR SYMBOL ──
+// Official Saudi Riyal symbol approved Feb 2025, Unicode U+20C1
+// Using styled text fallback since U+20C1 font support is still rolling out
+function sarSVG(size, color) {
+  const c = encodeURIComponent(color || 'currentColor');
+  const s = size || '1em';
+  // Render the Unicode U+20C1 character with Arabic font stack
+  // Falls back to "SAR" text if glyph missing
+  return `<span style="font-family:'Saudi Riyal','Geeza Pro','Arabic Typesetting',serif;font-size:${s};color:${color||'currentColor'};font-weight:700;line-height:1;display:inline-block;vertical-align:middle;">&#x20C1;</span>`;
+}
+
+function sarSym(size, color) { return sarSVG(size, color); }
+
+// ── INIT ──
+function init() {
+  // Inject SAR symbol into static elements
+  const herEl = document.getElementById('hero-sar');
+  if (herEl) herEl.innerHTML = sarSym('1.2em', 'var(--accent2)');
+  const addEl = document.getElementById('add-sar-sym');
+  if (addEl) addEl.innerHTML = sarSym('26px', 'var(--fuel2)');
+  const edEl = document.getElementById('edit-sar-sym');
+  if (edEl) edEl.innerHTML = sarSym('26px', 'var(--fuel2)');
+  const now = new Date();
+  selMonth = now.getMonth(); selYear = now.getFullYear();
+  tempMonth = selMonth; tempYear = selYear;
+  document.getElementById('add-date').valueAsDate = now;
+
+  // Profile fields
+  ['emp-name','emp-dept','emp-vehicle','emp-manager'].forEach(id => {
+    const saved = localStorage.getItem('fl_' + id);
+    if (saved) document.getElementById(id).value = saved;
+    document.getElementById(id).addEventListener('input', () => localStorage.setItem('fl_' + id, document.getElementById(id).value));
+  });
+
+  // Add image
+  document.getElementById('add-image').addEventListener('change', function() {
+    if (this.files && this.files[0]) {
+      const r = new FileReader();
+      r.onload = e => {
+        addImgData = e.target.result;
+        const prev = document.getElementById('upload-prev');
+        prev.src = addImgData; prev.style.display = 'block';
+        document.getElementById('upload-icon').textContent = '✅';
+        document.getElementById('upload-title').textContent = 'Receipt attached';
+        document.getElementById('upload-area').classList.add('has-file');
+      };
+      r.readAsDataURL(this.files[0]);
+    }
+  });
+
+  // Edit image
+  document.getElementById('edit-image').addEventListener('change', function() {
+    if (this.files && this.files[0]) {
+      const r = new FileReader();
+      r.onload = e => {
+        editImgData = e.target.result;
+        editImgChanged = true;
+        const icon = document.getElementById('erc-icon');
+        icon.innerHTML = `<img src="${editImgData}" alt="">`;
+        document.getElementById('erc-title').textContent = 'Receipt attached';
+        document.getElementById('erc-sub').textContent = 'Tap to change';
+        document.getElementById('erc-change').textContent = 'Change →';
+        document.getElementById('edit-receipt-row').classList.add('has-file');
+      };
+      r.readAsDataURL(this.files[0]);
+    }
+  });
+
+  buildMonthGrid();
+  loadBills();
+  updateUI();
+}
+
+function getKey(m,y) { return `fl_bills_${y}_${m}`; }
+function curKey() { return getKey(selMonth, selYear); }
+function loadBills() { const r = localStorage.getItem(curKey()); bills = r ? JSON.parse(r) : []; }
+function saveBills() { localStorage.setItem(curKey(), JSON.stringify(bills)); }
+
+// ── MONTH SHEET ──
+function openMonthSheet() {
+  tempMonth = selMonth; tempYear = selYear;
+  document.getElementById('sheet-year').textContent = tempYear;
+  buildMonthGrid();
+  document.getElementById('month-sheet').classList.add('open');
+}
+
+function sheetBgClick(e) { if (e.target === document.getElementById('month-sheet')) closeMonthSheet(); }
+function closeMonthSheet() { document.getElementById('month-sheet').classList.remove('open'); }
+function changeYear(d) { tempYear += d; document.getElementById('sheet-year').textContent = tempYear; buildMonthGrid(); }
+
+function buildMonthGrid() {
+  const g = document.getElementById('month-grid');
+  if (!g) return;
+  g.innerHTML = '';
+  MS.forEach((m, i) => {
+    const el = document.createElement('div');
+    el.className = 'month-opt' + (i === tempMonth ? ' sel' : '');
+    el.textContent = m;
+    el.onclick = () => {
+      document.querySelectorAll('.month-opt').forEach(x => x.classList.remove('sel'));
+      el.classList.add('sel'); tempMonth = i;
+    };
+    g.appendChild(el);
+  });
+}
+
+function applyMonth() {
+  selMonth = tempMonth; selYear = tempYear;
+  closeMonthSheet(); loadBills(); updateUI(); renderHistory();
+}
+
+// ── ADD BILL ──
+function addBill() {
+  const amount = parseFloat(document.getElementById('add-amount').value);
+  const date = document.getElementById('add-date').value;
+  const note = document.getElementById('add-note').value.trim();
+  const fuel = document.getElementById('add-fuel').value;
+
+  if (!date) { toast('⚠️ Pick a date'); return; }
+  if (isNaN(amount) || amount <= 0) { toast('⚠️ Enter a valid amount'); return; }
+
+  bills.push({ id: Date.now(), amount, date, note, fuel, image: addImgData });
+  bills.sort((a,b) => a.date.localeCompare(b.date));
+  saveBills(); updateUI(); clearAddForm();
+  switchTab('home');
+  toast('✅ Bill added!');
+}
+
+function clearAddForm() {
+  document.getElementById('add-amount').value = '';
+  document.getElementById('add-note').value = '';
+  document.getElementById('add-date').valueAsDate = new Date();
+  document.getElementById('add-image').value = '';
+  addImgData = null;
+  document.getElementById('upload-icon').textContent = '📎';
+  document.getElementById('upload-title').textContent = 'Attach Receipt';
+  document.getElementById('upload-prev').style.display = 'none';
+  document.getElementById('upload-area').classList.remove('has-file');
+}
+
+function deleteBill(id) {
+  bills = bills.filter(b => b.id !== id);
+  saveBills(); updateUI(); toast('🗑 Removed');
+}
+
+function clearMonthBills() {
+  if (!bills.length) return;
+  if (confirm('Clear all bills for ' + MONTHS[selMonth] + ' ' + selYear + '?')) {
+    bills = []; saveBills(); updateUI(); toast('Cleared');
+  }
+}
+
+// ── EDIT ──
+function openEdit(id) {
+  const b = bills.find(x => x.id === id);
+  if (!b) return;
+  editId = id; editImgData = b.image || null; editImgChanged = false;
+
+  document.getElementById('edit-amount').value = b.amount;
+  document.getElementById('edit-date').value = b.date;
+  document.getElementById('edit-note').value = b.note || '';
+  document.getElementById('edit-fuel').value = b.fuel || 'Petrol';
+  document.getElementById('edit-image').value = '';
+
+  const icon = document.getElementById('erc-icon');
+  const row = document.getElementById('edit-receipt-row');
+
+  if (b.image) {
+    icon.innerHTML = `<img src="${b.image}" alt="">`;
+    document.getElementById('erc-title').textContent = 'Receipt attached';
+    document.getElementById('erc-sub').textContent = 'Tap to change photo';
+    document.getElementById('erc-change').textContent = 'Change →';
+    row.classList.add('has-file');
+  } else {
+    icon.innerHTML = '📎';
+    document.getElementById('erc-title').textContent = 'No receipt attached';
+    document.getElementById('erc-sub').textContent = 'Tap to attach photo';
+    document.getElementById('erc-change').textContent = 'Add →';
+    row.classList.remove('has-file');
+  }
+
+  document.getElementById('edit-sheet-overlay').classList.add('open');
+}
+
+function closeEditSheet() {
+  document.getElementById('edit-sheet-overlay').classList.remove('open');
+  editId = null; editImgChanged = false;
+}
+
+function editSheetBgClick(e) { if (e.target === document.getElementById('edit-sheet-overlay')) closeEditSheet(); }
+
+function saveEdit() {
+  const amount = parseFloat(document.getElementById('edit-amount').value);
+  const date = document.getElementById('edit-date').value;
+  const note = document.getElementById('edit-note').value.trim();
+  const fuel = document.getElementById('edit-fuel').value;
+
+  if (!date) { toast('⚠️ Pick a date'); return; }
+  if (isNaN(amount) || amount <= 0) { toast('⚠️ Enter a valid amount'); return; }
+
+  const idx = bills.findIndex(b => b.id === editId);
+  if (idx === -1) return;
+
+  bills[idx] = {
+    ...bills[idx],
+    amount, date, note, fuel,
+    image: editImgChanged ? editImgData : bills[idx].image
+  };
+
+  bills.sort((a,b) => a.date.localeCompare(b.date));
+  saveBills(); updateUI(); closeEditSheet();
+  toast('✏️ Bill updated!');
+}
+
+// ── RENDER ──
+function updateUI() {
+  const total = bills.reduce((s,b) => s+b.amount, 0);
+  document.getElementById('top-month').textContent = MS[selMonth] + ' ' + selYear;
+  document.getElementById('total-val').textContent = total.toLocaleString('en-IN', {maximumFractionDigits:2});
+  document.getElementById('bill-ct-chip').textContent = bills.length + ' bill' + (bills.length!==1?'s':'');
+  document.getElementById('month-period-chip').textContent = MONTHS[selMonth] + ' ' + selYear;
+  document.getElementById('export-sub').textContent = MONTHS[selMonth] + ' ' + selYear + ' — ' + bills.length + ' bills';
+  renderBillsList();
+  renderHistory();
+}
+
+function renderBillsList() {
+  const list = document.getElementById('bills-list');
+  const empty = document.getElementById('bills-empty');
+
+  if (!bills.length) { list.innerHTML = ''; empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+
+  list.innerHTML = bills.map((b,i) => {
+    const hasImg = !!b.image;
+    const noRcpt = !hasImg ? `<div class="bill-no-rcpt">📎 Attach receipt</div>` : '';
+    return `
+    <div class="bill-item" onclick="openEdit(${b.id})">
+      <div class="bill-num">${String(i+1).padStart(2,'0')}</div>
+      <div class="bill-receipt ${hasImg ? '' : 'no-img'}" title="${hasImg ? 'View receipt' : 'Attach receipt'}">
+        ${hasImg ? `<img src="${b.image}" alt="Receipt">` : '🧾'}
+      </div>
+      <div class="bill-info">
+        <div class="bill-date">${fmtDate(b.date)}</div>
+        <div class="bill-note">${b.fuel||'Petrol'}${b.note ? ' · ' + b.note : ''}</div>
+        ${noRcpt}
+      </div>
+      <div class="bill-right">
+        <div class="bill-amount">${sarSym()} ${b.amount.toLocaleString('en-SA',{minimumFractionDigits:2})}</div>
+        <div class="bill-actions">
+          <div class="bill-btn del" onclick="event.stopPropagation(); deleteBill(${b.id})" title="Delete">✕</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderHistory() {
+  const wrap = document.getElementById('history-list');
+  const allKeys = [];
+  for (let i=0; i<localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (k && k.startsWith('fl_bills_')) allKeys.push(k);
+  }
+  const entries = allKeys
+    .map(k => {
+      const parts = k.replace('fl_bills_','').split('_');
+      const y = parseInt(parts[0]), m = parseInt(parts[1]);
+      const data = JSON.parse(localStorage.getItem(k)||'[]');
+      return { y, m, data };
+    })
+    .filter(e => e.data.length > 0 && !(e.m === selMonth && e.y === selYear))
+    .sort((a,b) => b.y !== a.y ? b.y-a.y : b.m-a.m);
+
+  if (!entries.length) {
+    wrap.innerHTML = `<div class="empty"><div class="e-icon">📅</div><p>No previous months found.</p></div>`;
+    return;
+  }
+
+  wrap.innerHTML = entries.map((e, idx) => {
+    const tot = e.data.reduce((s,b)=>s+b.amount,0);
+    const rows = e.data.map((b,i) => `
+      <div class="bill-item">
+        <div class="bill-num">${String(i+1).padStart(2,'0')}</div>
+        <div class="bill-receipt" onclick="${b.image ? `viewImg('${b.image.replace(/'/g,"\\'")}')` : ''}">
+          ${b.image ? `<img src="${b.image}" alt="">` : '🧾'}
+        </div>
+        <div class="bill-info">
+          <div class="bill-date">${fmtDate(b.date)}</div>
+          <div class="bill-note">${b.fuel||'Petrol'}${b.note?' · '+b.note:''}</div>
+        </div>
+        <div class="bill-right">
+          <div class="bill-amount">${sarSym()} ${b.amount.toLocaleString('en-SA',{minimumFractionDigits:2})}</div>
+        </div>
+      </div>`).join('');
+
+    return `
+      <div class="history-month">
+        <div class="history-month-hdr" id="hhdr${idx}" onclick="toggleHistory(this)">
+          <div>
+            <div class="hist-month-name">${MONTHS[e.m]} ${e.y}</div>
+            <div class="hist-month-ct">${e.data.length} bills</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:4px;">
+            <div class="hist-month-total">${sarSym()} ${tot.toLocaleString('en-SA',{minimumFractionDigits:2})}</div>
+            <div class="hist-month-arrow">▾</div>
+          </div>
+        </div>
+        <div class="history-bills" id="hbills${idx}">${rows}</div>
+      </div>`;
+  }).join('');
+}
+
+function toggleHistory(hdr) {
+  hdr.classList.toggle('open');
+  const idx = hdr.id.replace('hhdr','');
+  document.getElementById('hbills'+idx).classList.toggle('open');
+}
+
+// ── TAB ──
+function switchTab(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  document.getElementById('tab-'+name).classList.add('active');
+  document.querySelector('.scroll-area').scrollTop = 0;
+}
+
+// ── IMAGE MODAL ──
+function viewImg(src) {
+  document.getElementById('img-modal-src').src = src;
+  document.getElementById('img-modal').classList.add('open');
+}
+function closeImgModal() { document.getElementById('img-modal').classList.remove('open'); }
+
+// ── TOAST ──
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+function fmtDate(d) {
+  if (!d) return '—';
+  const [y,m,dd] = d.split('-');
+  return `${dd} ${MS[parseInt(m)-1]} ${y}`;
+}
+
+// ── PDF ──
+async function generatePDF() {
+  if (!bills.length) { toast('⚠️ No bills this month'); return; }
+
+  const name = localStorage.getItem('fl_emp-name') || '—';
+  const dept = localStorage.getItem('fl_emp-dept') || '—';
+  const vehicle = localStorage.getItem('fl_emp-vehicle') || '—';
+  const manager = localStorage.getItem('fl_emp-manager') || '—';
+  const period = MONTHS[selMonth] + ' ' + selYear;
+  const total = bills.reduce((s,b)=>s+b.amount,0);
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit:'mm', format:'a4' });
+  const W=210, PL=16, PR=16;
+  let y = 16;
+
+  doc.setFillColor(8,11,18);
+  doc.rect(0,0,W,40,'F');
+  doc.setFillColor(255,107,43);
+  doc.rect(0,40,W,2.5,'F');
+
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(20); doc.setTextColor(255,255,255);
+  doc.text('FuelLog — Expense Report', PL, y+10);
+  doc.setFont('helvetica','normal');
+  doc.setFontSize(9); doc.setTextColor(160,170,200);
+  doc.text('Company Vehicle Fuel Reimbursement  |  Period: ' + period, PL, y+20);
+  doc.text('Generated: ' + new Date().toLocaleDateString('en-SA',{day:'2-digit',month:'long',year:'numeric'}), W-PR, y+20, {align:'right'});
+
+  y = 52;
+
+  // Employee box
+  doc.setFillColor(20,25,44);
+  doc.roundedRect(PL, y, W-PL-PR, 28, 3, 3, 'F');
+  doc.setDrawColor(0,102,255); doc.setLineWidth(0.5);
+  doc.line(PL, y, PL+3, y);
+
+  doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(100,140,220);
+  doc.text('EMPLOYEE DETAILS', PL+6, y+7);
+  doc.setFont('helvetica','normal'); doc.setFontSize(10.5); doc.setTextColor(230,235,255);
+  doc.text('Name: ' + name, PL+6, y+16);
+  doc.text('Dept: ' + dept, W/2, y+16);
+  doc.text('Vehicle: ' + vehicle, PL+6, y+24);
+  doc.text('Approver: ' + manager, W/2, y+24);
+
+  y += 36;
+
+  // Table header
+  const c = [PL, 44, 78, 126, 158, 180];
+  doc.setFillColor(0,102,255);
+  doc.rect(PL, y, W-PL-PR, 9, 'F');
+  doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(255,255,255);
+  ['#','Date','Fuel','Amount (SAR)','Notes','Rcpt'].forEach((h,i) => doc.text(h, c[i]+2, y+6));
+  y += 9;
+
+  bills.forEach((b, i) => {
+    if (y+11 > 282) { doc.addPage(); y = 20; }
+    if (i%2===0) { doc.setFillColor(14,18,34); doc.rect(PL, y, W-PL-PR, 10, 'F'); }
+    doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(30,30,30);
+
+    // For dark rows use light text
+    const tc = i%2===0 ? [200,210,240] : [30,30,50];
+    doc.setTextColor(...tc);
+    doc.text(String(i+1).padStart(2,'0'), c[0]+2, y+7);
+    doc.text(fmtDate(b.date), c[1]+2, y+7);
+    doc.text(b.fuel||'Petrol', c[2]+2, y+7);
+    doc.setFont('helvetica','bold');
+    doc.text('SAR '+b.amount.toLocaleString('en-SA',{minimumFractionDigits:2}), c[3]+2, y+7);
+    doc.setFont('helvetica','normal');
+    const note = b.note ? (b.note.length>20 ? b.note.slice(0,18)+'…':b.note):'—';
+    doc.text(note, c[4]+2, y+7);
+
+    if (b.image) {
+      try { doc.addImage(b.image,'JPEG', c[5]+1, y+1, 15, 8); }
+      catch(e) { doc.setTextColor(80,180,80); doc.text('✓', c[5]+2, y+7); }
+    } else {
+      doc.setTextColor(160,160,180); doc.text('—', c[5]+2, y+7);
+    }
+
+    doc.setDrawColor(30,40,70); doc.setLineWidth(0.2);
+    doc.line(PL, y+10, W-PR, y+10);
+    y += 10;
+  });
+
+  y += 8;
+  if (y+15 > 280) { doc.addPage(); y = 20; }
+
+  doc.setFillColor(0,102,255);
+  doc.roundedRect(PL, y, W-PL-PR, 14, 3, 3, 'F');
+  doc.setFont('helvetica','bold'); doc.setFontSize(11); doc.setTextColor(255,255,255);
+  doc.text('TOTAL  (' + bills.length + ' bills)', PL+5, y+9);
+  doc.setTextColor(180,220,255);
+  doc.text('SAR ' + total.toLocaleString('en-SA',{minimumFractionDigits:2}), W-PR-5, y+9, {align:'right'});
+
+  y += 26;
+  if (y+32 > 280) { doc.addPage(); y = 20; }
+  doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(100,100,120);
+  doc.text('I declare that the above expenses are genuine and incurred for company vehicle fuel.', PL, y);
+  y += 20;
+  doc.setDrawColor(140,150,180);
+  doc.line(PL, y, PL+60, y); doc.line(W/2+10, y, W/2+70, y);
+  doc.setFontSize(8); doc.setTextColor(120,130,160);
+  doc.text('Employee Signature', PL, y+6);
+  doc.text('Date: __________', PL, y+12);
+  doc.text('Manager / Approver', W/2+10, y+6);
+  doc.text('Date: __________', W/2+10, y+12);
+
+  const tp = doc.internal.getNumberOfPages();
+  for (let p=1; p<=tp; p++) {
+    doc.setPage(p);
+    doc.setFont('helvetica','normal'); doc.setFontSize(7.5); doc.setTextColor(140,150,180);
+    doc.text(`FuelLog  |  Page ${p} of ${tp}  |  Confidential`, W/2, 292, {align:'center'});
+  }
+
+  const fname = `FuelLog_${period.replace(' ','_')}_${(name||'Employee').replace(/\s/g,'_')}.pdf`;
+  doc.save(fname);
+  toast('📄 PDF exported!');
+}
+
+init();
+
+// ── PWA SERVICE WORKER ──
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(r => console.log('SW registered'))
+      .catch(e => console.log('SW error', e));
+  });
+}
+</script>
+
+</body>
+</html>
